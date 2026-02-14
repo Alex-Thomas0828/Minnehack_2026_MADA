@@ -1,0 +1,25 @@
+{
+  "name": "minnehack_2026_mada",
+  "version": "1.0.0",
+  "description": "Minnehack 2026 Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alex-Thomas0828/Minnehack_2026_MADA.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Alex-Thomas0828/Minnehack_2026_MADA/issues"
+  },
+  "homepage": "https://github.com/Alex-Thomas0828/Minnehack_2026_MADA#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
