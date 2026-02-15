@@ -21,5 +21,8 @@
   "homepage": "https://github.com/Alex-Thomas0828/Minnehack_2026_MADA#readme",
   "devDependencies": {
     "concurrently": "^9.2.1"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.95.3"
   }
 }
