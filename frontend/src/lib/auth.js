@@ -1,7 +1,7 @@
 import { supabase } from './supabase.js';
 
 // SIGN UP + CREATE PROFILE ROW
-export async function signUp(email, password) {
+export async function signUp(email, password, name, phone) {
   // 1. Create auth user
   const { data, error } = await supabase.auth.signUp({ email, password });
   if (error) throw error;
@@ -12,8 +12,9 @@ export async function signUp(email, password) {
   // 2. Create profile row in public.users
   const { error: profileError } = await supabase.from('Users').insert({
     id: user.id,
-    name: '',
-    phone: '',
+    email: email || '',
+    name: name ||  '',
+    phone: phone || '',
     socials: {},
     is_demander: false
   });
@@ -43,4 +44,17 @@ export async function signOut() {
 export async function getCurrentUser() {
   const { data } = await supabase.auth.getUser();
   return data.user;
+}
+
+// get DB profile instead of justaed of auth use 
+export async function getUserProfile(id) {
+  const { data, error } = await supabase
+    .from('Users')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) throw error;
+
+  return data;
 }
