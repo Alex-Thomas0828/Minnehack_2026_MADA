@@ -1,19 +1,26 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { supabase } from "./lib/supabase";
 
 import MendMap from "./components/Map";
 import AuthPage from "./pages/AuthPage";
 import MendDetails from "./components/MendDetails";
-import { Plus } from 'lucide-react';
 
-function App() {
+// New pages
+import ChooseRolePage from "./pages/ChooseRolePage";
+import NeedHelpPage from "./pages/NeedHelpPage";
+import MenderPage from "./pages/MenderPage";
+
+function AppInner() {
   const [pins, setPins] = useState([]);
   const [user, setUser] = useState(null);
   const [selectedPin, setSelectedPin] = useState(null);
   const [isDropping, setIsDropping] = useState(false);
   const [droppedPin, setDroppedPin] = useState(null);
 
+  const navigate = useNavigate();
+
+  // Auth listener
   useEffect(() => {
     const getUser = async () => {
       const { data } = await supabase.auth.getUser();
@@ -86,87 +93,81 @@ function App() {
     getPins();
   }, []);
 
+  // When user clicks on map to drop a pin
   const handlePointSelection = (lat, lng) => {
     if (!isDropping) return;
-    setDroppedPin({ lat, lng });
+
+    const pin = { lat, lng };
+    setDroppedPin(pin);
     setIsDropping(false);
+
+    // Redirect to choose-role page with pin data
+    navigate("/choose-role", { state: { droppedPin: pin } });
   };
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/auth" element={<AuthPage />} />
-        <Route
-          path="/"
-          element={   
-            user ? (
-              <div className="flex flex-col h-screen w-screen overflow-hidden">
-                <header className="bg-mend-dark p-4 flex justify-between items-center shadow-md z-[1000]">
-                  <h1 className="text-mend-white text-xl font-bold">The MSP Mend</h1>
-                  <button
-                    onClick={() => {
-                      setIsDropping((prev) => !prev);
-                      setDroppedPin(null);
-                    }}
-                    className={`px-4 py-2 rounded-full font-bold text-sm transition-all shadow-sm flex gap-2 items-center border-2 ${
-                      isDropping
-                        ? "bg-red-500 text-white border-transparent"
-                        : "bg-mend-white text-mend-dark border-transparent hover:bg-mend-cyan hover:text-white"
-                    }`}
-                  >
-                    {isDropping ? (
-                      "Cancel"
-                    ) : (
-                      <>
-                        <Plus size={18} />
-                        DROP A PIN
-                      </>
-                    )}
-                  </button>
-                </header>
+    <Routes>
+      <Route path="/auth" element={<AuthPage />} />
 
-                {isDropping && (
-                  <div className="bg-yellow-100 text-yellow-800 text-center text-sm py-2 font-medium">
-                    Click on the map to drop your pin
-                  </div>
+      {/* New pages */}
+      <Route path="/choose-role" element={<ChooseRolePage />} />
+      <Route path="/need-help" element={<NeedHelpPage />} />
+      <Route path="/i-can-help" element={<MenderPage />} />
+
+      {/* Protected map */}
+      <Route
+        path="/"
+        element={
+          user ? (
+            <div className="flex flex-col h-screen w-screen overflow-hidden">
+              <header className="bg-mend-dark p-4 flex justify-between items-center shadow-md z-[1000]">
+                <h1 className="text-mend-white text-xl font-bold">The MSP Mend</h1>
+                <button
+                  onClick={() => {
+                    setIsDropping(prev => !prev);
+                    setDroppedPin(null);
+                  }}
+                  className={`px-4 py-2 rounded-full font-bold text-sm transition-colors ${
+                    isDropping ? "bg-red-500 text-white" : "bg-mend-cyan text-mend-dark"
+                  }`}
+                >
+                  {isDropping ? "Cancel" : "+ Drop a Pin"}
+                </button>
+              </header>
+
+              {isDropping && (
+                <div className="bg-yellow-100 text-yellow-800 text-center text-sm py-2 font-medium">
+                  Click on the map to drop your pin
+                </div>
+              )}
+
+              <main className="flex-1 min-h-0 relative">
+                <MendMap
+                  pins={pins}
+                  onLocationSelect={handlePointSelection}
+                  onPinClick={setSelectedPin}
+                  isDropping={isDropping}
+                  droppedPin={droppedPin}
+                />
+
+                {selectedPin && (
+                  <MendDetails pin={selectedPin} onClose={() => setSelectedPin(null)} />
                 )}
-
-                <main className="flex-1 min-h-0 relative">
-                  <MendMap
-                    pins={pins}
-                    onLocationSelect={handlePointSelection}
-                    onPinClick={setSelectedPin}
-                    isDropping={isDropping}
-                    droppedPin={droppedPin}
-                  />
-                  {selectedPin && (
-                    <MendDetails pin={selectedPin} onClose={() => setSelectedPin(null)} />
-                  )}
-
-                  {droppedPin && (
-                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-xl px-6 py-4 z-[1000] text-center">
-                      <p className="text-sm font-bold text-mend-dark mb-1">Pin Dropped</p>
-                      <p className="text-xs text-slate-500">
-                        Lat: {droppedPin.lat.toFixed(6)}, Lng: {droppedPin.lng.toFixed(6)}
-                      </p>
-                      <button
-                        onClick={() => setDroppedPin(null)}
-                        className="mt-3 text-xs text-red-500 hover:underline"
-                      >
-                        Remove pin
-                      </button>
-                    </div>
-                  )}
-                </main>
-              </div>
-            ) : (
-              <Navigate to="/auth" replace />
-            )
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+              </main>
+            </div>
+          ) : (
+            <Navigate to="/auth" replace />
+          )
+        }
+      />
+    </Routes>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppInner />
+    </BrowserRouter>
+  );
+}

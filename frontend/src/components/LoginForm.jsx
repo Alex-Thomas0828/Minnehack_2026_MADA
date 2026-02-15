@@ -13,7 +13,7 @@ export default function LoginForm() {
     try {
       await signIn(email, password);
       setMessage('Logged in successfully!');
-      navigate('/');   // ⭐ redirect to map
+      navigate('/');   //  Navigate to map
     } catch (err) {
       setMessage(err.message);
     }
