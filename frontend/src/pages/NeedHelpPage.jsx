@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { uploadImage } from "../lib/upload";
-import { useNavigate } from "react-router-dom";
 
 export default function NeedHelpPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const droppedPin = location.state?.droppedPin;
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -16,33 +18,22 @@ export default function NeedHelpPage() {
     setLoading(true);
 
     try {
-      // Get current user
       const { data: userData } = await supabase.auth.getUser();
       const user = userData?.user;
 
-      if (!user) {
-        console.error("No authenticated user");
-        return;
-      }
-
-      // Upload image (if provided)
       const image_url = await uploadImage(imageFile, user.id);
 
-      // Insert into Help table
-      const { error } = await supabase.from("Help").insert({
-        help_id: Math.floor(Math.random() * 1000000000), // random int
-        demander_id: Math.floor(Math.random() * 1000000000), // random int
+      const { lat, lng } = droppedPin || {};
+
+      await supabase.from("Help").insert({
+        auth_id: user.id,
         name,
         description,
-        image_url
+        image_url,
+        demander_id: Math.floor(Math.random() * 1000000000),
+        location: droppedPin ? `POINT(${lng} ${lat})` : null
       });
 
-      if (error) {
-        console.error("Insert error:", error);
-        return;
-      }
-
-      // Navigate back to map
       navigate("/");
     } finally {
       setLoading(false);
@@ -74,15 +65,12 @@ export default function NeedHelpPage() {
           required
         />
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Image Upload</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setImageFile(e.target.files[0])}
-            className="w-full"
-          />
-        </div>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setImageFile(e.target.files[0])}
+          className="w-full"
+        />
 
         <button
           type="submit"

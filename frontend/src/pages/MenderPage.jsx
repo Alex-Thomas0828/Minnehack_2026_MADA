@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { uploadImage } from "../lib/upload";
-import { useNavigate } from "react-router-dom";
 
 export default function MenderPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const droppedPin = location.state?.droppedPin;
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -17,34 +19,23 @@ export default function MenderPage() {
     setLoading(true);
 
     try {
-      // Get current user
       const { data: userData } = await supabase.auth.getUser();
       const user = userData?.user;
 
-      if (!user) {
-        console.error("No authenticated user");
-        return;
-      }
-
-      // Upload image 
       const image_url = await uploadImage(imageFile, user.id);
 
-      // Insert into Service table
-      const { error } = await supabase.from("Service").insert({
-        service_id: Math.floor(Math.random() * 1000000000), // random int
-        supplier_id: Math.floor(Math.random() * 1000000000), // random int
+      const { lat, lng } = droppedPin || {};
+
+      await supabase.from("Service").insert({
+        auth_id: user.id,
         name,
         description,
         website,
-        image_url
+        image_url,
+        supplier_id: Math.floor(Math.random() * 1000000000),
+        location: droppedPin ? `POINT(${lng} ${lat})` : null
       });
 
-      if (error) {
-        console.error("Insert error:", error);
-        return;
-      }
-
-      // Navigate back to map
       navigate("/");
     } finally {
       setLoading(false);
@@ -84,15 +75,12 @@ export default function MenderPage() {
           className="w-full border p-2 rounded"
         />
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Image Upload</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setImageFile(e.target.files[0])}
-            className="w-full"
-          />
-        </div>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setImageFile(e.target.files[0])}
+          className="w-full"
+        />
 
         <button
           type="submit"

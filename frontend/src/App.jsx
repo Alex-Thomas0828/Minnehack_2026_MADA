@@ -1,23 +1,26 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { supabase } from "./lib/supabase";
 
 import MendMap from "./components/Map";
 import AuthPage from "./pages/AuthPage";
 import MendDetails from "./components/MendDetails";
 
-// Pin adding options
+// New pages
 import ChooseRolePage from "./pages/ChooseRolePage";
 import NeedHelpPage from "./pages/NeedHelpPage";
 import MenderPage from "./pages/MenderPage";
 
-function App() {
+function AppInner() {
   const [pins, setPins] = useState([]);
   const [user, setUser] = useState(null);
-  const [isDropping, setIsDropping] = useState(false);
   const [selectedPin, setSelectedPin] = useState(null);
+  const [isDropping, setIsDropping] = useState(false);
+  const [droppedPin, setDroppedPin] = useState(null);
 
-  // Check auth state
+  const navigate = useNavigate();
+
+  // Auth listener
   useEffect(() => {
     const getUser = async () => {
       const { data } = await supabase.auth.getUser();
@@ -25,7 +28,6 @@ function App() {
     };
     getUser();
 
-    // Listen for login/logout events
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
@@ -72,7 +74,6 @@ function App() {
 
       const servicePins = (serviceData || []).map(p => {
         const pinpoint = pinpointsByUserId[p.supplier_id] || {};
-        // Try to find user
         const userInfo = Object.values(usersById).find(u => u.name === p.name) || {};
         return {
           ...p,
@@ -93,59 +94,81 @@ function App() {
     getPins();
   }, []);
 
+  // When user clicks on map to drop a pin
   const handlePointSelection = (lat, lng) => {
-    console.log("Point clicked at:", lat, lng);
+    if (!isDropping) return;
+
+    const pin = { lat, lng };
+    setDroppedPin(pin);
+    setIsDropping(false);
+
+    // Redirect to choose-role page with pin data
+    navigate("/choose-role", { state: { droppedPin: pin } });
   };
 
   return (
-    <BrowserRouter>
-      <Routes>
+    <Routes>
+      <Route path="/auth" element={<AuthPage />} />
 
-        {/* Auth Page */}
-        <Route path="/auth" element={<AuthPage />} />
+      {/* New pages */}
+      <Route path="/choose-role" element={<ChooseRolePage />} />
+      <Route path="/need-help" element={<NeedHelpPage />} />
+      <Route path="/i-can-help" element={<MenderPage />} />
 
-        {/* Form routes */}
-        <Route path="/choose-role" element={<ChooseRolePage />} />
-        <Route path="/need-help" element={<NeedHelpPage />} />
-        <Route path="/i-can-help" element={<MenderPage />} />
+      {/* Protected map */}
+      <Route
+        path="/"
+        element={
+          user ? (
+            <div className="flex flex-col h-screen w-screen overflow-hidden">
+              <header className="bg-mend-dark p-4 flex justify-between items-center shadow-md z-[1000]">
+                <h1 className="text-mend-white text-xl font-bold">The MSP Mend</h1>
+                <button
+                  onClick={() => {
+                    setIsDropping(prev => !prev);
+                    setDroppedPin(null);
+                  }}
+                  className={`px-4 py-2 rounded-full font-bold text-sm transition-colors ${
+                    isDropping ? "bg-red-500 text-white" : "bg-mend-cyan text-mend-dark"
+                  }`}
+                >
+                  {isDropping ? "Cancel" : "+ Drop a Pin"}
+                </button>
+              </header>
 
-        {/* Protected Map Page */}
-        <Route
-          path="/"
-          element={
-            user ? (
-              <div className="flex flex-col h-screen w-screen overflow-hidden">
-                <header className="bg-mend-dark p-4 flex justify-between items-center shadow-md z-[1000]">
-                  <h1 className="text-mend-white text-xl font-bold">The MSP Mend</h1>
-                  <button className="bg-mend-cyan text-mend-dark px-4 py-2 rounded-full font-bold text-sm">
-                    + Drop a Pin
-                  </button>
-                </header>
+              {isDropping && (
+                <div className="bg-yellow-100 text-yellow-800 text-center text-sm py-2 font-medium">
+                  Click on the map to drop your pin
+                </div>
+              )}
 
-                <main className="flex-1 min-h-0 relative">
-                  <MendMap 
-                    pins={pins} 
-                    onLocationSelect={handlePointSelection} 
-                    onPinClick={setSelectedPin} 
-                  />
+              <main className="flex-1 min-h-0 relative">
+                <MendMap
+                  pins={pins}
+                  onLocationSelect={handlePointSelection}
+                  onPinClick={setSelectedPin}
+                  isDropping={isDropping}
+                  droppedPin={droppedPin}
+                />
 
-                  {selectedPin && (
-                    <MendDetails 
-                      pin={selectedPin} 
-                      onClose={() => setSelectedPin(null)} 
-                    />
-                  )}
-                </main>
-              </div>
-            ) : (
-              <Navigate to="/auth" replace />
-            )
-          }
-        />
-
-      </Routes>
-    </BrowserRouter>
+                {selectedPin && (
+                  <MendDetails pin={selectedPin} onClose={() => setSelectedPin(null)} />
+                )}
+              </main>
+            </div>
+          ) : (
+            <Navigate to="/auth" replace />
+          )
+        }
+      />
+    </Routes>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppInner />
+    </BrowserRouter>
+  );
+}
