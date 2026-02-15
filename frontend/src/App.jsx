@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "./lib/supabase";
 import MendMap from "./components/Map";
+import MapKey from "./components/MapKey";
 
 function App() {
   const [pins, setPins] = useState([]);
@@ -50,8 +51,9 @@ function App() {
         </div>
       )}
 
-      <main className="flex-1">
+      <main className="flex-1 relative">
         <MendMap pins={pins} onLocationSelect={handlePointSelection} />
+        <MapKey />
       </main>
 
     </div>
