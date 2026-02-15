@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { MapContainer, TileLayer, Circle, Marker, Popup, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -56,7 +57,28 @@ function MapClickHandler({ onMapClick }) {
   return null;
 }
 
-export default function MendMap({ pins, onLocationSelect, onPinClick }) {
+// Blue icon for the dropped pin
+const blueIcon = new L.Icon({
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png",
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
+
+function DropCursorHandler({ isDropping }) {
+  const map = useMapEvents({});
+  useEffect(() => {
+    const container = map.getContainer();
+    container.style.cursor = isDropping ? "crosshair" : "";
+    return () => { container.style.cursor = ""; };
+  }, [isDropping, map]);
+  return null;
+}
+
+export default function MendMap({ pins, onLocationSelect, onPinClick, isDropping, droppedPin }) {
   return (
     <div className="flex h-full w-full">
       <Sidebar pins={pins} onPinClick={onPinClick} />
@@ -114,6 +136,17 @@ export default function MendMap({ pins, onLocationSelect, onPinClick }) {
         })}
 
         <MapClickHandler onMapClick={onLocationSelect} />
+        <DropCursorHandler isDropping={isDropping} />
+
+        {droppedPin && (
+          <Marker position={[droppedPin.lat, droppedPin.lng]} icon={blueIcon}>
+            <Popup>
+              <strong>Dropped Pin</strong><br />
+              Lat: {droppedPin.lat.toFixed(6)}<br />
+              Lng: {droppedPin.lng.toFixed(6)}
+            </Popup>
+          </Marker>
+        )}
       </MapContainer>
       <MapKey />
     </div>
