@@ -3,16 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { supabase } from "./lib/supabase";
 
 import MendMap from "./components/Map";
-<<<<<<< HEAD
 import AuthPage from "./pages/AuthPage";
-import MapKey from "./components/MapKey";
-<<<<<<< HEAD
 import MendDetails from "./components/MendDetails";
-=======
-=======
->>>>>>> 7046202 (formatting sidebar and map key)
-
->>>>>>> dd6ec8a (formatting sidebar and map key)
 
 function App() {
   const [pins, setPins] = useState([]);
