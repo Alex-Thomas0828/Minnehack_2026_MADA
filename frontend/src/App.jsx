@@ -6,6 +6,11 @@ import MendMap from "./components/Map";
 import AuthPage from "./pages/AuthPage";
 import MendDetails from "./components/MendDetails";
 
+// ⭐ NEW PAGES
+import ChooseRolePage from "./pages/ChooseRolePage";
+import NeedHelpPage from "./pages/NeedHelpPage";
+import MenderPage from "./pages/MenderPage";
+
 function App() {
   const [pins, setPins] = useState([]);
   const [user, setUser] = useState(null);
@@ -50,9 +55,14 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        
+
         {/* Auth Page */}
         <Route path="/auth" element={<AuthPage />} />
+
+        {/* Form routes */}
+        <Route path="/choose-role" element={<ChooseRolePage />} />
+        <Route path="/need-help" element={<NeedHelpPage />} />
+        <Route path="/i-can-help" element={<MenderPage />} />
 
         {/* Protected Map Page */}
         <Route
@@ -68,9 +78,17 @@ function App() {
                 </header>
 
                 <main className="flex-1 min-h-0 relative">
-                  <MendMap pins={pins} onLocationSelect={handlePointSelection} onPinClick={setSelectedPin} />
+                  <MendMap 
+                    pins={pins} 
+                    onLocationSelect={handlePointSelection} 
+                    onPinClick={setSelectedPin} 
+                  />
+
                   {selectedPin && (
-                    <MendDetails pin={selectedPin} onClose={() => setSelectedPin(null)} />
+                    <MendDetails 
+                      pin={selectedPin} 
+                      onClose={() => setSelectedPin(null)} 
+                    />
                   )}
                 </main>
               </div>
