@@ -3,9 +3,16 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { supabase } from "./lib/supabase";
 
 import MendMap from "./components/Map";
+<<<<<<< HEAD
 import AuthPage from "./pages/AuthPage";
 import MapKey from "./components/MapKey";
+<<<<<<< HEAD
 import MendDetails from "./components/MendDetails";
+=======
+=======
+>>>>>>> 7046202 (formatting sidebar and map key)
+
+>>>>>>> dd6ec8a (formatting sidebar and map key)
 
 function App() {
   const [pins, setPins] = useState([]);
@@ -68,9 +75,8 @@ function App() {
                   </button>
                 </header>
 
-                <main className="flex-1 relative">
+                <main className="flex-1 min-h-0 relative">
                   <MendMap pins={pins} onLocationSelect={handlePointSelection} onPinClick={setSelectedPin} />
-                  <MapKey />
                   {selectedPin && (
                     <MendDetails pin={selectedPin} onClose={() => setSelectedPin(null)} />
                   )}
