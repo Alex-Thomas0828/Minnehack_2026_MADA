@@ -5,11 +5,14 @@ import { supabase } from "./lib/supabase";
 import MendMap from "./components/Map";
 import AuthPage from "./pages/AuthPage";
 import MapKey from "./components/MapKey";
+import MendDetails from "./components/MendDetails";
 
 
 function App() {
   const [pins, setPins] = useState([]);
   const [user, setUser] = useState(null);
+  const [isDropping, setIsDropping] = useState(false);
+  const [selectedPin, setSelectedPin] = useState(null);
 
   // Check auth state on load
   useEffect(() => {
@@ -65,10 +68,12 @@ function App() {
                     + Drop a Pin
                   </button>
                 </header>
-
-                <main className="flex-1">
-                  <MendMap pins={pins} onLocationSelect={handlePointSelection} />
+                <main className="flex-1 relative">
+                  <MendMap pins={pins} onLocationSelect={handlePointSelection} onPinClick={setSelectedPin} />
                   <MapKey />
+                  {selectedPin && (
+                    <MendDetails pin={selectedPin} onClose={() => setSelectedPin(null)} />
+                  )}
                 </main>
               </div>
             ) : (

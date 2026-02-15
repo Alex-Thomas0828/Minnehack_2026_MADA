@@ -56,7 +56,7 @@ function MapClickHandler({ onMapClick }) {
   return null;
 }
 
-export default function MendMap({ pins, onLocationSelect }) {
+export default function MendMap({ pins, onLocationSelect, onPinClick }) {
   return (
     <div className="h-full w-full">
       <MapContainer center={MSP_CENTER} zoom={12} className="h-full w-full">
@@ -81,6 +81,9 @@ export default function MendMap({ pins, onLocationSelect }) {
                   fillOpacity: 0.25,
                   weight: 1.5,
                 }}
+                eventHandlers={{
+                  click: () => onPinClick(pin),
+                }}
               >
                 <Popup>
                   <strong>{pin.name}</strong>
@@ -96,6 +99,9 @@ export default function MendMap({ pins, onLocationSelect }) {
               key={`service-${pin.service_id || index}`}
               position={[pos.lat, pos.lng]}
               icon={greenIcon}
+              eventHandlers={{
+                click: () => onPinClick(pin),
+              }}
             >
               <Popup>
                 <strong>{pin.name}</strong>
