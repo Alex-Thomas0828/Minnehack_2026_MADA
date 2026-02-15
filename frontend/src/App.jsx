@@ -5,6 +5,7 @@ import { supabase } from "./lib/supabase";
 import MendMap from "./components/Map";
 import AuthPage from "./pages/AuthPage";
 import MendDetails from "./components/MendDetails";
+import { Plus } from 'lucide-react';
 
 function App() {
   const [pins, setPins] = useState([]);
@@ -13,7 +14,6 @@ function App() {
   const [isDropping, setIsDropping] = useState(false);
   const [droppedPin, setDroppedPin] = useState(null);
 
-  // Check auth state on load
   useEffect(() => {
     const getUser = async () => {
       const { data } = await supabase.auth.getUser();
@@ -21,7 +21,6 @@ function App() {
     };
     getUser();
 
-    // Listen for login/logout events
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
@@ -29,7 +28,6 @@ function App() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  // Fetch pins
   useEffect(() => {
     const getPins = async () => {
       const [
@@ -97,14 +95,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        
-        {/* Auth Page */}
         <Route path="/auth" element={<AuthPage />} />
-
-        {/* Protected Map Page */}
         <Route
           path="/"
-          element={
+          element={   
             user ? (
               <div className="flex flex-col h-screen w-screen overflow-hidden">
                 <header className="bg-mend-dark p-4 flex justify-between items-center shadow-md z-[1000]">
@@ -114,13 +108,20 @@ function App() {
                       setIsDropping((prev) => !prev);
                       setDroppedPin(null);
                     }}
-                    className={`px-4 py-2 rounded-full font-bold text-sm transition-colors ${
+                    className={`px-4 py-2 rounded-full font-bold text-sm transition-all shadow-sm flex gap-2 items-center border-2 ${
                       isDropping
-                        ? "bg-red-500 text-white"
-                        : "bg-mend-cyan text-mend-dark"
+                        ? "bg-red-500 text-white border-transparent"
+                        : "bg-mend-white text-mend-dark border-transparent hover:bg-mend-cyan hover:text-white"
                     }`}
                   >
-                    {isDropping ? "Cancel" : "+ Drop a Pin"}
+                    {isDropping ? (
+                      "Cancel"
+                    ) : (
+                      <>
+                        <Plus size={18} />
+                        DROP A PIN
+                      </>
+                    )}
                   </button>
                 </header>
 
@@ -163,7 +164,6 @@ function App() {
             )
           }
         />
-
       </Routes>
     </BrowserRouter>
   );

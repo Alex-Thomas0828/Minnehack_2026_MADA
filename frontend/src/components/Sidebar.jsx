@@ -11,7 +11,6 @@ export default function Sidebar({ pins = [], onPinClick }) {
     const fetchUser = async () => {
       const authUser = await getCurrentUser();
       if (!authUser) return;
-
       const profile = await getUserProfile(authUser.id);
       setUser(profile);
     };
@@ -26,82 +25,77 @@ export default function Sidebar({ pins = [], onPinClick }) {
   }
 
   return (
-    <div className="flex h-full relative">
-      {/* SIDEBAR ICONS */}
-      <div className="w-14 bg-[var(--color-mend-dark)] text-white flex flex-col items-center py-6 shrink-0">
+    <div className="flex h-screen relative">
+      {/* SIDEBAR NAVIGATION */}
+      <div className="w-20 bg-mend-dark text-white flex flex-col items-center py-6 shrink-0 z-20">
         <div className="flex flex-col space-y-6 w-full items-center">
           <button
-            className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-800"
+            className={`flex items-center justify-center w-12 h-12 rounded-full transition duration-250 ${
+              activePanel === "profile" ? "bg-mend-cyan" : "hover:bg-mend-cyan/50"
+            }`}
             onClick={() => togglePanel("profile")}
           >
-            <User size={20} />
+            <User />
           </button>
 
           <button
-            className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-800"
+            className={`flex items-center justify-center w-12 h-12 rounded-full transition duration-250 ${
+              activePanel === "filter" ? "bg-mend-cyan" : "hover:bg-mend-cyan/50"
+            }`}
             onClick={() => togglePanel("filter")}
           >
-            <Menu size={20} />
+            <Menu />
           </button>
 
           <button
-            className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-800"
+            className={`flex items-center justify-center w-12 h-12 rounded-full transition duration-250 ${
+              activePanel === "info" ? "bg-mend-cyan" : "hover:bg-mend-cyan/50"
+            }`}
             onClick={() => togglePanel("info")}
           >
-            <Info size={20} />
+            <Info />
           </button>
         </div>
       </div>
 
-      {/* EXPANDABLE PANEL */}
+      {/* EXPANDABLE CONTENT PANEL */}
       {activePanel && (
-        <div className="w-72 bg-white text-black shadow-lg flex flex-col h-full shrink-0">
+        <div className="w-72 bg-white text-black shadow-lg flex flex-col h-full shrink-0 z-10 border-r border-slate-200">
           {/* Profile Panel */}
           {activePanel === "profile" && (
             <div className="p-6">
-              <h2 className="text-sm font-bold text-mend-dark uppercase tracking-wider mb-4">
-                Profile
-              </h2>
-              <div className="space-y-2">
-                <p className="text-xs text-slate-600">
-                  Name: <span className="font-medium">{user?.name || "—"}</span>
-                </p>
-                <p className="text-xs text-slate-600">
-                  Phone:{" "}
-                  <span className="font-medium">{user?.phone || "—"}</span>
-                </p>
-                <p className="text-xs text-slate-600">
-                  Email:{" "}
-                  <span className="font-medium">{user?.email || "—"}</span>
-                </p>
+              <h2 className="text-sm font-bold text-mend-dark uppercase tracking-wider mb-4">Profile</h2>
+              <div className="space-y-3">
+                <div className="border-b pb-2">
+                  <p className="text-[10px] text-slate-400 uppercase font-bold">Name</p>
+                  <p className="text-sm font-medium">{user?.name || "—"}</p>
+                </div>
+                <div className="border-b pb-2">
+                  <p className="text-[10px] text-slate-400 uppercase font-bold">Email</p>
+                  <p className="text-sm font-medium">{user?.email || "—"}</p>
+                </div>
+                <div className="border-b pb-2">
+                  <p className="text-[10px] text-slate-400 uppercase font-bold">Phone</p>
+                  <p className="text-sm font-medium">{user?.phone || "—"}</p>
+                </div>
               </div>
             </div>
           )}
 
-          {/* Filter / Listings Panel */}
+          {/* Listings Panel */}
           {activePanel === "filter" && (
             <div className="flex flex-col h-full">
-              {/* Header */}
-              <div className="p-4 border-b border-slate-200">
-                <h2 className="text-sm font-bold text-mend-dark uppercase tracking-wider text-center mb-3">
-                  Listings
-                </h2>
-
-                {/* Counts */}
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">{pins.length} Total</span>
-                  <div className="flex gap-3">
-                    <span className="text-emerald-600 font-medium">
-                      {menderCount} Menders
-                    </span>
-                    <span className="text-red-500 font-medium">
-                      {demandCount} Requests
-                    </span>
+              <div className="p-4 border-b border-slate-200 bg-slate-50">
+                <h2 className="text-sm font-bold text-mend-dark uppercase tracking-wider text-center mb-3">Listings</h2>
+                <div className="flex justify-between text-[10px] uppercase font-bold">
+                  <div className="flex gap-2">
+                    <span className="text-emerald-600">{menderCount} Menders</span>
+                    <span className="text-red-500">{demandCount} Requests</span>
                   </div>
+                  <span className="text-slate-400">{pins.length} Total</span>
                 </div>
               </div>
 
-              {/* Scrollable pin list */}
               <div className="flex-1 overflow-y-auto">
                 {pins.length > 0 ? (
                   pins.map((pin, i) => (
@@ -112,10 +106,8 @@ export default function Sidebar({ pins = [], onPinClick }) {
                     />
                   ))
                 ) : (
-                  <div className="p-6 text-center">
-                    <p className="text-xs text-slate-400 italic">
-                      No listings yet
-                    </p>
+                  <div className="p-10 text-center">
+                    <p className="text-xs text-slate-400 italic font-medium">No listings found in this area</p>
                   </div>
                 )}
               </div>
@@ -125,23 +117,12 @@ export default function Sidebar({ pins = [], onPinClick }) {
           {/* Info Panel */}
           {activePanel === "info" && (
             <div className="p-6">
-              <h2 className="text-sm font-bold text-mend-dark uppercase tracking-wider mb-4">
-                About
-              </h2>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Life gets busy. Sometimes you need help. Sometimes you have the
-                skills to help someone else.
-              </p>
-              <br />
-              <p className="text-xs text-slate-600 leading-relaxed">
-                This platform connects people who need a service with people who
-                can offer that service — safely and simply.
-              </p>
-              <br />
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Whether it's tutoring, moving help, design work, tech support,
-                or everyday tasks, you can find or offer help here.
-              </p>
+              <h2 className="text-sm font-bold text-mend-dark uppercase tracking-wider mb-4">About MSP Mend</h2>
+              <div className="space-y-4 text-xs text-slate-600 leading-relaxed">
+                <p>Sometimes you need help. Sometimes you have the skills to help someone else.</p>
+                <p>This platform connects people who need a service with local menders who can offer that service — safely and simply.</p>
+                <p>Whether it’s sewing, electronics repair, or everyday tasks, you can find or offer help here.</p>
+              </div>
             </div>
           )}
         </div>
