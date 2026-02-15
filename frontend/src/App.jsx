@@ -36,11 +36,56 @@ function App() {
   // Fetch pins
   useEffect(() => {
     const getPins = async () => {
-      const { data: helpData } = await supabase.from('Help').select('*');
-      const { data: serviceData } = await supabase.from('Service').select('*');
+      const [
+        { data: helpData },
+        { data: serviceData },
+        { data: usersData },
+        { data: pinpointsData },
+      ] = await Promise.all([
+        supabase.from('Help').select('*'),
+        supabase.from('Service').select('*'),
+        supabase.from('users').select('*'),
+        supabase.from('Mapping Pinpoints').select('*'),
+      ]);
 
-      const helpPins = (helpData || []).map(p => ({ ...p, is_demander: true }));
-      const servicePins = (serviceData || []).map(p => ({ ...p, is_demander: false }));
+      const usersById = {};
+      (usersData || []).forEach(u => { usersById[u.id] = u; });
+
+      const pinpointsByUserId = {};
+      (pinpointsData || []).forEach(mp => { pinpointsByUserId[mp.user_id] = mp; });
+
+      const helpPins = (helpData || []).map(p => {
+        const userInfo = usersById[p.auth_id] || {};
+        const pinpoint = pinpointsByUserId[p.demander_id] || {};
+        return {
+          ...p,
+          is_demander: true,
+          user_name: userInfo.name,
+          email: userInfo.email,
+          phone: userInfo.phone,
+          socials: userInfo.socials,
+          category: pinpoint.category,
+          is_resolved: pinpoint.is_resolved,
+          created_at: userInfo.created_at,
+        };
+      });
+
+      const servicePins = (serviceData || []).map(p => {
+        const pinpoint = pinpointsByUserId[p.supplier_id] || {};
+        // Try to find user by matching name or other means
+        const userInfo = Object.values(usersById).find(u => u.name === p.name) || {};
+        return {
+          ...p,
+          is_demander: false,
+          user_name: userInfo.name || p.name,
+          email: userInfo.email,
+          phone: userInfo.phone,
+          socials: userInfo.socials,
+          category: pinpoint.category,
+          is_resolved: pinpoint.is_resolved,
+          created_at: userInfo.created_at,
+        };
+      });
 
       setPins([...helpPins, ...servicePins]);
     };

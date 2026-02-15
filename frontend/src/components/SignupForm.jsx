@@ -15,7 +15,7 @@ export default function SignupForm() {
     e.preventDefault();
     try {
       if (isSignup) {
-        await signUp(email, password);
+        await signUp(email, password, name, phone);
         setMessage('Signup successful — check your email to confirm.');
       } else {
         await signIn(email, password);

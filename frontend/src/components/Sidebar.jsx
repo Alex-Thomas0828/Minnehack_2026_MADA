@@ -2,7 +2,7 @@ import { Menu } from 'lucide-react';
 import { User } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Info } from 'lucide-react';
-import { getCurrentUser } from '../lib/auth';
+import { getCurrentUser, getUserProfile } from '../lib/auth';
 
 export default function Sidebar() {
     const [activePanel, setActivePanel] = useState(null);
@@ -10,10 +10,12 @@ export default function Sidebar() {
 
     useEffect(() => {
       const fetchUser = async () => {
-        const currentUser = await getCurrentUser();
-        setUser(currentUser);
-      };
+        const authUser = await getCurrentUser();
+        if (!authUser) return;
     
+        const profile = await getUserProfile(authUser.id);
+        setUser(profile);
+      };
       fetchUser();
     }, []);
 
@@ -59,7 +61,10 @@ export default function Sidebar() {
             {activePanel === "profile" && 
             (<> 
               <div>
-                <h1>Welcome, {user.email}</h1>
+                <h1>Welcome, {user?.email}</h1>
+                <h1>Name: {user?.name}</h1>
+                <h1>Phone: {user?.phone}</h1>
+                <h1>Email: {user?.email}</h1>
               </div>
             </>)
             }
