@@ -4,6 +4,8 @@ import { supabase } from "./lib/supabase";
 
 import MendMap from "./components/Map";
 import AuthPage from "./pages/AuthPage";
+import MapKey from "./components/MapKey";
+
 
 function App() {
   const [pins, setPins] = useState([]);
@@ -66,6 +68,7 @@ function App() {
 
                 <main className="flex-1">
                   <MendMap pins={pins} onLocationSelect={handlePointSelection} />
+                  <MapKey />
                 </main>
               </div>
             ) : (
