@@ -1,31 +1,25 @@
 import { useEffect, useState } from "react";
 import { supabase } from "./lib/supabase";
 import MendMap from "./components/Map";
+import MapKey from "./components/MapKey";
 
 function App() {
   const [pins, setPins] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState(null);
   const [isDropping, setIsDropping] = useState(false);
 
   const fetchPins = async () => {
-    const { data: helpData } = await supabase
-      .from("Help")
-      .select(`help_id, name, description, location`);
-    const { data: serviceData } = await supabase
-      .from("Service")
-      .select(`service_id, name, description, location`);
+  const { data: helpData, error: helpError } = await supabase.from("Help").select(`*`);
+  const { data: serviceData, error: serviceError } = await supabase.from("Service").select(`*`);
 
-    // DEBUGING LOG
-    console.log("Sample Data:", helpData?.[0]?.location);
+  if (helpError) console.error("Help Fetch Error:", helpError);
+  if (serviceError) console.error("Service Fetch Error:", serviceError);
 
-    const helpPins = (helpData || []).map((p) => ({ ...p, is_demander: true }));
-    const servicePins = (serviceData || []).map((p) => ({
-      ...p,
-      is_demander: false,
-    }));
+  const helpPins = (helpData || []).map((p) => ({ ...p, is_demander: true }));
+  const servicePins = (serviceData || []).map((p) => ({ ...p, is_demander: false }));
 
-    setPins([...helpPins, ...servicePins]);
-  };
+  console.log("Total pins to render:", helpPins.length + servicePins.length);
+  setPins([...helpPins, ...servicePins]);
+};
 
   useEffect(() => {
     fetchPins();
@@ -33,14 +27,8 @@ function App() {
 
   const handlePointSelection = (lat, lng) => {
     if (!isDropping) return;
-    setSelectedLocation({ lat, lng });
-    setShowModal(true);
+    console.log("Point Selected:", lat, lng);
     setIsDropping(false);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setSelectedLocation(null);
   };
 
   return (
@@ -50,9 +38,7 @@ function App() {
         <button
           onClick={() => setIsDropping((prev) => !prev)}
           className={`px-4 py-2 rounded-full font-bold text-sm transition-colors ${
-            isDropping
-              ? "bg-mend-gold text-mend-dark"
-              : "bg-mend-cyan text-mend-dark"
+            isDropping ? "bg-mend-gold text-mend-dark" : "bg-mend-cyan text-mend-dark"
           }`}
         >
           {isDropping ? "Cancel" : "+ Drop a Pin"}
@@ -65,17 +51,11 @@ function App() {
         </div>
       )}
 
-      <main className="flex-1">
+      <main className="flex-1 relative">
         <MendMap pins={pins} onLocationSelect={handlePointSelection} />
+        <MapKey />
       </main>
 
-      {showModal && selectedLocation && (
-        <AddMendModal
-          selectedLocation={selectedLocation}
-          onClose={handleCloseModal}
-          onPinAdded={fetchPins}
-        />
-      )}
     </div>
   );
 }

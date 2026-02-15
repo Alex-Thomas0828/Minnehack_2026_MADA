@@ -20,7 +20,11 @@ function parseLocation(location) {
 
   if (typeof location === "string" && location.length > 20) {
     try {
-      const bytes = location.match(/.{1,2}/g).map(byte => parseInt(byte, 16));
+      const cleanHex = location.trim();
+      const matches = cleanHex.match(/.{1,2}/g);
+      if (!matches) return null;
+
+      const bytes = matches.map(byte => parseInt(byte, 16));
       const buffer = new Uint8Array(bytes).buffer;
       const view = new DataView(buffer);
       
@@ -39,12 +43,16 @@ function parseLocation(location) {
     return { lat: location.coordinates[1], lng: location.coordinates[0] };
   }
 
-  // Fallback: WKT format "POINT(lng lat)"
-  if (typeof location === "string" && location.startsWith("POINT")) {
-    const match = location.match(/POINT\(([^ ]+) ([^ ]+)\)/);
-    if (match) return { lat: parseFloat(match[2]), lng: parseFloat(match[1]) };
-  }
+  return null;
+}
 
+function MapClickHandler({ onMapClick }) {
+  useMapEvents({
+    click: (e) => {
+      const { lat, lng } = e.latlng;
+      onMapClick(lat, lng);
+    },
+  });
   return null;
 }
 
@@ -57,7 +65,7 @@ export default function MendMap({ pins, onLocationSelect }) {
           attribution="&copy; OpenStreetMap"
         />
 
-        {pins.map((pin) => {
+        {pins && pins.map((pin, index) => {
           const pos = parseLocation(pin.location);
           if (!pos) return null;
 
@@ -85,7 +93,7 @@ export default function MendMap({ pins, onLocationSelect }) {
 
           return (
             <Marker
-              key={`service-${pin.service_id}`}
+              key={`service-${pin.service_id || index}`}
               position={[pos.lat, pos.lng]}
               icon={greenIcon}
             >
@@ -99,18 +107,7 @@ export default function MendMap({ pins, onLocationSelect }) {
         })}
 
         <MapClickHandler onMapClick={onLocationSelect} />
-        
       </MapContainer>
     </div>
   );
-}
-
-function MapClickHandler({ onMapClick }) {
-  useMapEvents({
-    click: (e) => {
-      const { lat, lng } = e.latlng;
-      onMapClick(lat, lng);
-    },
-  });
-  return null;
 }
