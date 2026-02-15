@@ -1,14 +1,54 @@
 import { useState } from "react";
+import { supabase } from "../lib/supabase";
+import { uploadImage } from "../lib/upload";
+import { useNavigate } from "react-router-dom";
 
 export default function MenderPage() {
+  const navigate = useNavigate();
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [website, setWebsite] = useState("");
   const [imageFile, setImageFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log({ name, description, website, imageFile });
+    setLoading(true);
+
+    try {
+      // Get current user
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData?.user;
+
+      if (!user) {
+        console.error("No authenticated user");
+        return;
+      }
+
+      // Upload image 
+      const image_url = await uploadImage(imageFile, user.id);
+
+      // Insert into Service table
+      const { error } = await supabase.from("Service").insert({
+        service_id: Math.floor(Math.random() * 1000000000), // random int
+        supplier_id: Math.floor(Math.random() * 1000000000), // random int
+        name,
+        description,
+        website,
+        image_url
+      });
+
+      if (error) {
+        console.error("Insert error:", error);
+        return;
+      }
+
+      // Navigate back to map
+      navigate("/");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -25,6 +65,7 @@ export default function MenderPage() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="w-full border p-2 rounded"
+          required
         />
 
         <textarea
@@ -32,6 +73,7 @@ export default function MenderPage() {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="w-full border p-2 rounded h-24"
+          required
         />
 
         <input
@@ -54,9 +96,10 @@ export default function MenderPage() {
 
         <button
           type="submit"
-          className="w-full bg-mend-blue text-white py-3 rounded-lg font-semibold"
+          disabled={loading}
+          className="w-full bg-mend-blue text-white py-3 rounded-lg font-semibold disabled:opacity-50"
         >
-          Submit
+          {loading ? "Submitting..." : "Submit"}
         </button>
       </form>
     </div>
