@@ -67,7 +67,6 @@ function App() {
 
       const servicePins = (serviceData || []).map(p => {
         const pinpoint = pinpointsByUserId[p.supplier_id] || {};
-        // Try to find user by matching name or other means
         const userInfo = Object.values(usersById).find(u => u.name === p.name) || {};
         return {
           ...p,
