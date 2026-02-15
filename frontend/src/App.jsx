@@ -10,10 +10,10 @@ import { Plus } from 'lucide-react';
 function App() {
   const [pins, setPins] = useState([]);
   const [user, setUser] = useState(null);
-  const [isDropping, setIsDropping] = useState(false);
   const [selectedPin, setSelectedPin] = useState(null);
+  const [isDropping, setIsDropping] = useState(false);
+  const [droppedPin, setDroppedPin] = useState(null);
 
-  // Check auth state on load
   useEffect(() => {
     const getUser = async () => {
       const { data } = await supabase.auth.getUser();
@@ -21,7 +21,6 @@ function App() {
     };
     getUser();
 
-    // Listen for login/logout events
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
@@ -29,7 +28,6 @@ function App() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  // Fetch pins
   useEffect(() => {
     const getPins = async () => {
       const [
@@ -68,7 +66,6 @@ function App() {
 
       const servicePins = (serviceData || []).map(p => {
         const pinpoint = pinpointsByUserId[p.supplier_id] || {};
-        // Try to find user by matching name or other means
         const userInfo = Object.values(usersById).find(u => u.name === p.name) || {};
         return {
           ...p,
@@ -90,17 +87,15 @@ function App() {
   }, []);
 
   const handlePointSelection = (lat, lng) => {
-    console.log("Point clicked at:", lat, lng);
+    if (!isDropping) return;
+    setDroppedPin({ lat, lng });
+    setIsDropping(false);
   };
 
   return (
     <BrowserRouter>
       <Routes>
-
-        {/* Auth Page */}
         <Route path="/auth" element={<AuthPage />} />
-
-        {/* Protected Map Page */}
         <Route
           path="/"
           element={   
@@ -108,16 +103,59 @@ function App() {
               <div className="flex flex-col h-screen w-screen overflow-hidden">
                 <header className="bg-mend-dark p-4 flex justify-between items-center shadow-md z-[1000]">
                   <h1 className="text-mend-white text-xl font-bold">The MSP Mend</h1>
-                  <button className="bg-mend-white text-mend-dark px-4 py-2 rounded-full font-bold text-sm border-2 border-transparent hover:bg-mend-cyan transition hover:border-2  hover:text-mend-white cursor-pointer shadow-sm flex gap-2 text-center items-center">
-                    <Plus />
-                    DROP A PIN
+                  <button
+                    onClick={() => {
+                      setIsDropping((prev) => !prev);
+                      setDroppedPin(null);
+                    }}
+                    className={`px-4 py-2 rounded-full font-bold text-sm transition-all shadow-sm flex gap-2 items-center border-2 ${
+                      isDropping
+                        ? "bg-red-500 text-white border-transparent"
+                        : "bg-mend-white text-mend-dark border-transparent hover:bg-mend-cyan hover:text-white"
+                    }`}
+                  >
+                    {isDropping ? (
+                      "Cancel"
+                    ) : (
+                      <>
+                        <Plus size={18} />
+                        DROP A PIN
+                      </>
+                    )}
                   </button>
                 </header>
 
+                {isDropping && (
+                  <div className="bg-yellow-100 text-yellow-800 text-center text-sm py-2 font-medium">
+                    Click on the map to drop your pin
+                  </div>
+                )}
+
                 <main className="flex-1 min-h-0 relative">
-                  <MendMap pins={pins} onLocationSelect={handlePointSelection} onPinClick={setSelectedPin} />
+                  <MendMap
+                    pins={pins}
+                    onLocationSelect={handlePointSelection}
+                    onPinClick={setSelectedPin}
+                    isDropping={isDropping}
+                    droppedPin={droppedPin}
+                  />
                   {selectedPin && (
                     <MendDetails pin={selectedPin} onClose={() => setSelectedPin(null)} />
+                  )}
+
+                  {droppedPin && (
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-xl px-6 py-4 z-[1000] text-center">
+                      <p className="text-sm font-bold text-mend-dark mb-1">Pin Dropped</p>
+                      <p className="text-xs text-slate-500">
+                        Lat: {droppedPin.lat.toFixed(6)}, Lng: {droppedPin.lng.toFixed(6)}
+                      </p>
+                      <button
+                        onClick={() => setDroppedPin(null)}
+                        className="mt-3 text-xs text-red-500 hover:underline"
+                      >
+                        Remove pin
+                      </button>
+                    </div>
                   )}
                 </main>
               </div>
@@ -126,7 +164,6 @@ function App() {
             )
           }
         />
-
       </Routes>
     </BrowserRouter>
   );

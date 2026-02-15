@@ -1,10 +1,9 @@
-import { Menu } from 'lucide-react';
-import { User } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { Info } from 'lucide-react';
-import { getCurrentUser, getUserProfile } from '../lib/auth';
+import { Menu, User, Info } from "lucide-react";
+import { useState, useEffect } from "react";
+import { getCurrentUser, getUserProfile } from "../lib/auth";
+import PinModal from "./PinModal";
 
-export default function Sidebar() {
+export default function Sidebar({ pins = [], onPinClick }) {
   const [activePanel, setActivePanel] = useState(null);
   const [user, setUser] = useState(null);
 
@@ -12,83 +11,122 @@ export default function Sidebar() {
     const fetchUser = async () => {
       const authUser = await getCurrentUser();
       if (!authUser) return;
-
       const profile = await getUserProfile(authUser.id);
       setUser(profile);
     };
     fetchUser();
   }, []);
 
+  const demandCount = pins.filter((p) => p.is_demander).length;
+  const menderCount = pins.filter((p) => !p.is_demander).length;
+
   function togglePanel(panel) {
-    setActivePanel(prev => (prev === panel ? null : panel));
+    setActivePanel((prev) => (prev === panel ? null : panel));
   }
 
   return (
     <div className="flex h-screen relative">
-
-      {/* SIDEBAR */}
-      <div className="w-20 bg-[var(--color-mend-dark)] text-white flex flex-col items-center py-6">
+      {/* SIDEBAR NAVIGATION */}
+      <div className="w-20 bg-mend-dark text-white flex flex-col items-center py-6 shrink-0 z-20">
         <div className="flex flex-col space-y-6 w-full items-center">
-
           <button
-            className="flex items-center justify-center w-12 h-12 rounded-full hover:bg-mend-cyan transition duration-250"
+            className={`flex items-center justify-center w-12 h-12 rounded-full transition duration-250 ${
+              activePanel === "profile" ? "bg-mend-cyan" : "hover:bg-mend-cyan/50"
+            }`}
             onClick={() => togglePanel("profile")}
           >
             <User />
-
           </button>
 
           <button
-            className="flex items-center justify-center w-12 h-12 rounded-full hover:bg-mend-cyan transition duration-250"
+            className={`flex items-center justify-center w-12 h-12 rounded-full transition duration-250 ${
+              activePanel === "filter" ? "bg-mend-cyan" : "hover:bg-mend-cyan/50"
+            }`}
             onClick={() => togglePanel("filter")}
           >
             <Menu />
           </button>
 
           <button
-            className="flex items-center justify-center w-12 h-12 rounded-full hover:bg-mend-cyan transition duration-250"
+            className={`flex items-center justify-center w-12 h-12 rounded-full transition duration-250 ${
+              activePanel === "info" ? "bg-mend-cyan" : "hover:bg-mend-cyan/50"
+            }`}
             onClick={() => togglePanel("info")}
           >
             <Info />
           </button>
-
         </div>
       </div>
 
-      {/* EXTRA SIDEBAR */}
+      {/* EXPANDABLE CONTENT PANEL */}
       {activePanel && (
-        <div className="w-64 bg-white text-black shadow-lg p-6">
-          {activePanel === "profile" &&
-            (<>
-              <div>
-                <h1>Welcome, {user?.email}</h1>
-                <h1>Name: {user?.name}</h1>
-                <h1>Phone: {user?.phone}</h1>
-                <h1>Email: {user?.email}</h1>
+        <div className="w-72 bg-white text-black shadow-lg flex flex-col h-full shrink-0 z-10 border-r border-slate-200">
+          {/* Profile Panel */}
+          {activePanel === "profile" && (
+            <div className="p-6">
+              <h2 className="text-sm font-bold text-mend-dark uppercase tracking-wider mb-4">Profile</h2>
+              <div className="space-y-3">
+                <div className="border-b pb-2">
+                  <p className="text-[10px] text-slate-400 uppercase font-bold">Name</p>
+                  <p className="text-sm font-medium">{user?.name || "—"}</p>
+                </div>
+                <div className="border-b pb-2">
+                  <p className="text-[10px] text-slate-400 uppercase font-bold">Email</p>
+                  <p className="text-sm font-medium">{user?.email || "—"}</p>
+                </div>
+                <div className="border-b pb-2">
+                  <p className="text-[10px] text-slate-400 uppercase font-bold">Phone</p>
+                  <p className="text-sm font-medium">{user?.phone || "—"}</p>
+                </div>
               </div>
-            </>)
-          }
-          {activePanel === "filter" && <h1>Filter Panel</h1>}
+            </div>
+          )}
+
+          {/* Listings Panel */}
+          {activePanel === "filter" && (
+            <div className="flex flex-col h-full">
+              <div className="p-4 border-b border-slate-200 bg-slate-50">
+                <h2 className="text-sm font-bold text-mend-dark uppercase tracking-wider text-center mb-3">Listings</h2>
+                <div className="flex justify-between text-[10px] uppercase font-bold">
+                  <div className="flex gap-2">
+                    <span className="text-emerald-600">{menderCount} Menders</span>
+                    <span className="text-red-500">{demandCount} Requests</span>
+                  </div>
+                  <span className="text-slate-400">{pins.length} Total</span>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto">
+                {pins.length > 0 ? (
+                  pins.map((pin, i) => (
+                    <PinModal
+                      key={pin.help_id || pin.service_id || i}
+                      pin={pin}
+                      onClick={onPinClick}
+                    />
+                  ))
+                ) : (
+                  <div className="p-10 text-center">
+                    <p className="text-xs text-slate-400 italic font-medium">No listings found in this area</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Info Panel */}
           {activePanel === "info" && (
-            <>
-              <div>
-                <h1>
-
-                  Life gets busy. Sometimes you need help.
-                  Sometimes you have the skills to help someone else.
-
-                  <br />
-                  This platform connects people who need a service with people who can offer that service — safely and simply.
-
-                  <br />
-                  Whether it’s tutoring, moving help, design work, tech support, or everyday tasks, you can:
-                </h1>
+            <div className="p-6">
+              <h2 className="text-sm font-bold text-mend-dark uppercase tracking-wider mb-4">About MSP Mend</h2>
+              <div className="space-y-4 text-xs text-slate-600 leading-relaxed">
+                <p>Sometimes you need help. Sometimes you have the skills to help someone else.</p>
+                <p>This platform connects people who need a service with local menders who can offer that service — safely and simply.</p>
+                <p>Whether it’s sewing, electronics repair, or everyday tasks, you can find or offer help here.</p>
               </div>
-            </>
+            </div>
           )}
         </div>
       )}
-
     </div>
   );
 }
