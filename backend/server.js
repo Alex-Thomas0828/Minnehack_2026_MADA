@@ -3,6 +3,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import supabase from "./supabaseClient.js";
 
+import userRoutes from "./routes/users.js";
+import helpRoutes from "./routes/help.js";
+import serviceRoutes from "./routes/service.js";
+
 dotenv.config();
 
 const app = express();
@@ -29,6 +33,10 @@ app.get("/health", async (req, res) => {
     res.json({ status: "database healthy" });
   });
   
+app.use("/api/users", userRoutes);
+app.use("/api/help", helpRoutes);
+app.use("/api/service", helpRoutes);
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
