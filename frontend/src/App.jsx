@@ -51,7 +51,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-
+        
         {/* Auth Page */}
         <Route path="/auth" element={<AuthPage />} />
 
