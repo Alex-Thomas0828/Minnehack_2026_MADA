@@ -7,7 +7,6 @@ import AuthPage from "./pages/AuthPage";
 import MapKey from "./components/MapKey";
 import MendDetails from "./components/MendDetails";
 
-
 function App() {
   const [pins, setPins] = useState([]);
   const [user, setUser] = useState(null);
@@ -68,6 +67,7 @@ function App() {
                     + Drop a Pin
                   </button>
                 </header>
+
                 <main className="flex-1 relative">
                   <MendMap pins={pins} onLocationSelect={handlePointSelection} onPinClick={setSelectedPin} />
                   <MapKey />
