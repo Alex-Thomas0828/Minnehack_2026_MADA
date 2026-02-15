@@ -35,7 +35,6 @@ function AppInner() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  // Fetch pins
   useEffect(() => {
     const getPins = async () => {
       const [
