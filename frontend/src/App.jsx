@@ -2,7 +2,23 @@ import { useState } from 'react'
 import viteLogo from '/vite.svg'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [pins, setPins] = useState([]);
+
+  useEffect(() => {
+    const getPins = async () => {
+      const {data: helpData} = await supabase.from('Help').select('*');
+      const { data: serviceData} = await supabase.from('Service').select('*');
+
+      const helpPins = (helpData || []).map(p => ({...p, is_demander: true}));
+      const servicePins = (serviceData || []).map(p => ({ ...p, is_demander: false}));
+
+      setPins([...helpPins, ...servicePins]);
+    }
+  })
+
+  const handlePointSelection = (lat, lng) => {
+    console.log("Point clicked at:", lat, lng);
+  }
 
   return (
     <>
@@ -16,15 +32,12 @@ function App() {
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+      </header>
 
-export default App
+      <main className="flex-1">
+        <MendMap pins={pins} onLocationSelect={handlePointSelection} />
+      </main>
+    </div>
+  );
+}
+export default App;
