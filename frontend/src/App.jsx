@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { supabase } from "./lib/supabase";
 import MendMap from "./components/Map";
 import MapKey from "./components/MapKey";
+import MendDetails from "./components/MendDetails";
 
 function App() {
   const [pins, setPins] = useState([]);
   const [isDropping, setIsDropping] = useState(false);
+  const [selectedPin, setSelectedPin] = useState(null);
 
   const fetchPins = async () => {
   const { data: helpData, error: helpError } = await supabase.from("Help").select(`*`);
@@ -52,8 +54,11 @@ function App() {
       )}
 
       <main className="flex-1 relative">
-        <MendMap pins={pins} onLocationSelect={handlePointSelection} />
+        <MendMap pins={pins} onLocationSelect={handlePointSelection} onPinClick={setSelectedPin} />
         <MapKey />
+        {selectedPin && (
+          <MendDetails pin={selectedPin} onClose={() => setSelectedPin(null)} />
+        )}
       </main>
 
     </div>
