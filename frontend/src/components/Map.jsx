@@ -1,6 +1,8 @@
 import { MapContainer, TileLayer, Circle, Marker, Popup, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import Sidebar from "./Sidebar";
+import MapKey from "./MapKey";
 
 const MSP_CENTER = [44.9778, -93.265];
 
@@ -58,7 +60,8 @@ function MapClickHandler({ onMapClick }) {
 
 export default function MendMap({ pins, onLocationSelect, onPinClick }) {
   return (
-    <div className="h-full w-full">
+    <div className="flex h-full w-full">
+      <Sidebar />
       <MapContainer center={MSP_CENTER} zoom={12} className="h-full w-full">
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -114,6 +117,7 @@ export default function MendMap({ pins, onLocationSelect, onPinClick }) {
 
         <MapClickHandler onMapClick={onLocationSelect} />
       </MapContainer>
+      <MapKey />
     </div>
   );
 }
