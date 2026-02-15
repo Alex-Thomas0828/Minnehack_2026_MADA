@@ -4,8 +4,8 @@ const categoryColors = {
   "Physical Hardware": "bg-slate-500",
   "Art & Decor": "bg-purple-500",
   "Textiles/Clothing": "bg-orange-500",
-  "Electronics": "bg-yellow-500",
-  "Other": "bg-gray-400",
+  Electronics: "bg-yellow-500",
+  Other: "bg-gray-400",
 };
 
 export default function MendDetails({ pin, onClose }) {
@@ -20,7 +20,11 @@ export default function MendDetails({ pin, onClose }) {
     <div className="absolute top-4 right-4 z-[1001] w-80 md:w-96 bg-white rounded-2xl shadow-2xl border-2 border-mend-dark overflow-hidden transition-all max-h-[calc(100%-2rem)] flex flex-col">
       <div className="h-40 bg-slate-200 relative shrink-0">
         {pin.image_url ? (
-          <img src={pin.image_url} alt={pin.name} className="w-full h-full object-cover" />
+          <img
+            src={pin.image_url}
+            alt={pin.name}
+            className="w-full h-full object-cover"
+          />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-mend-blue/10 text-mend-blue">
             <span className="text-sm text-slate-400 font-medium">No image</span>
@@ -65,7 +69,9 @@ export default function MendDetails({ pin, onClose }) {
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-4">
           {pin.category && (
-            <span className={`px-2 py-1 rounded-full text-white text-[10px] font-bold flex items-center gap-1.5 ${catColor}`}>
+            <span
+              className={`px-2 py-1 rounded-full text-white text-[10px] font-bold flex items-center gap-1.5 ${catColor}`}
+            >
               <span className="h-1.5 w-1.5 rounded-full bg-white/50" />
               {pin.category}
             </span>
@@ -105,22 +111,34 @@ export default function MendDetails({ pin, onClose }) {
           <div className="space-y-2">
             {pin.email && (
               <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-slate-500">Email:</span>
-                <a href={`mailto:${pin.email}`} className="text-xs text-mend-blue hover:underline">
+                <span className="text-xs font-medium text-slate-500">
+                  Email:
+                </span>
+                <a
+                  href={`mailto:${pin.email}`}
+                  className="text-xs text-mend-blue hover:underline"
+                >
                   {pin.email}
                 </a>
               </div>
             )}
             {pin.phone && (
               <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-slate-500">Phone:</span>
-                <a href={`tel:${pin.phone}`} className="text-xs text-mend-blue hover:underline">
+                <span className="text-xs font-medium text-slate-500">
+                  Phone:
+                </span>
+                <a
+                  href={`tel:${pin.phone}`}
+                  className="text-xs text-mend-blue hover:underline"
+                >
                   {pin.phone}
                 </a>
               </div>
             )}
             {!pin.email && !pin.phone && (
-              <p className="text-xs text-slate-400 italic">No contact info provided</p>
+              <p className="text-xs text-slate-400 italic">
+                No contact info provided
+              </p>
             )}
           </div>
         </div>

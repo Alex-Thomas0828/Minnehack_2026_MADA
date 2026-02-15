@@ -6,7 +6,7 @@ import MendMap from "./components/Map";
 import AuthPage from "./pages/AuthPage";
 import MendDetails from "./components/MendDetails";
 
-// ⭐ NEW PAGES
+// Pin adding options
 import ChooseRolePage from "./pages/ChooseRolePage";
 import NeedHelpPage from "./pages/NeedHelpPage";
 import MenderPage from "./pages/MenderPage";
@@ -17,7 +17,7 @@ function App() {
   const [isDropping, setIsDropping] = useState(false);
   const [selectedPin, setSelectedPin] = useState(null);
 
-  // Check auth state on load
+  // Check auth state
   useEffect(() => {
     const getUser = async () => {
       const { data } = await supabase.auth.getUser();
@@ -72,7 +72,7 @@ function App() {
 
       const servicePins = (serviceData || []).map(p => {
         const pinpoint = pinpointsByUserId[p.supplier_id] || {};
-        // Try to find user by matching name or other means
+        // Try to find user
         const userInfo = Object.values(usersById).find(u => u.name === p.name) || {};
         return {
           ...p,

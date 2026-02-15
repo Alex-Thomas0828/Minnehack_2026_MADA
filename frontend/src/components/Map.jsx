@@ -1,22 +1,12 @@
+import { useEffect } from "react";
 import { MapContainer, TileLayer, Circle, Marker, Popup, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import Sidebar from "./Sidebar";
 import MapKey from "./MapKey";
-
 const MSP_CENTER = [44.9778, -93.265];
 
-// Green pin icon for service/supplier pins
-const greenIcon = new L.Icon({
-  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
-
-// Parse a PostGIS POINT string like POINT(lng lat) into { lat, lng }
+// Parse a PostGIS hex POINT into { lat, lng }
 function parseLocation(location) {
   if (!location) return null;
 
@@ -29,24 +19,33 @@ function parseLocation(location) {
       const bytes = matches.map(byte => parseInt(byte, 16));
       const buffer = new Uint8Array(bytes).buffer;
       const view = new DataView(buffer);
-      
-      const lng = view.getFloat64(9, true); 
+
+      const lng = view.getFloat64(9, true);
       const lat = view.getFloat64(17, true);
 
       return { lat, lng };
     } catch (e) {
-      console.error("Manual Hex parse failed:", e);
+      console.error("Hex parse failed:", e);
       return null;
     }
   }
 
-  // Fallback: GeoJSON format
   if (typeof location === "object" && location.coordinates) {
     return { lat: location.coordinates[1], lng: location.coordinates[0] };
   }
 
   return null;
 }
+
+// Green pin icon for service/supplier pins
+const greenIcon = new L.Icon({
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png",
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
 
 function MapClickHandler({ onMapClick }) {
   useMapEvents({
@@ -58,10 +57,31 @@ function MapClickHandler({ onMapClick }) {
   return null;
 }
 
-export default function MendMap({ pins, onLocationSelect, onPinClick }) {
+// Blue icon for the dropped pin
+const blueIcon = new L.Icon({
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png",
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
+
+function DropCursorHandler({ isDropping }) {
+  const map = useMapEvents({});
+  useEffect(() => {
+    const container = map.getContainer();
+    container.style.cursor = isDropping ? "crosshair" : "";
+    return () => { container.style.cursor = ""; };
+  }, [isDropping, map]);
+  return null;
+}
+
+export default function MendMap({ pins, onLocationSelect, onPinClick, isDropping, droppedPin }) {
   return (
     <div className="flex h-full w-full">
-      <Sidebar />
+      <Sidebar pins={pins} onPinClick={onPinClick} />
       <MapContainer center={MSP_CENTER} zoom={12} className="h-full w-full">
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -116,6 +136,17 @@ export default function MendMap({ pins, onLocationSelect, onPinClick }) {
         })}
 
         <MapClickHandler onMapClick={onLocationSelect} />
+        <DropCursorHandler isDropping={isDropping} />
+
+        {droppedPin && (
+          <Marker position={[droppedPin.lat, droppedPin.lng]} icon={blueIcon}>
+            <Popup>
+              <strong>Dropped Pin</strong><br />
+              Lat: {droppedPin.lat.toFixed(6)}<br />
+              Lng: {droppedPin.lng.toFixed(6)}
+            </Popup>
+          </Marker>
+        )}
       </MapContainer>
       <MapKey />
     </div>
