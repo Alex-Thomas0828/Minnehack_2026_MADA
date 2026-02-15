@@ -1,10 +1,21 @@
 import { Menu } from 'lucide-react';
 import { User } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Info } from 'lucide-react';
+import { getCurrentUser } from '../lib/auth';
 
 export default function Sidebar() {
     const [activePanel, setActivePanel] = useState(null);
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+      const fetchUser = async () => {
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
+      };
+    
+      fetchUser();
+    }, []);
 
     function togglePanel(panel) {
       setActivePanel(prev => (prev === panel ? null : panel));
@@ -22,6 +33,7 @@ export default function Sidebar() {
               onClick={() => togglePanel("profile")}
             >
               <User />
+              
             </button>
   
             <button
@@ -44,9 +56,31 @@ export default function Sidebar() {
         {/* EXTRA SIDEBAR */}
         {activePanel && (
           <div className="w-64 bg-white text-black shadow-lg p-6">
-            {activePanel === "profile" && <h1>Profile Panel</h1>}
+            {activePanel === "profile" && 
+            (<> 
+              <div>
+                <h1>Welcome, {user.email}</h1>
+              </div>
+            </>)
+            }
             {activePanel === "filter" && <h1>Filter Panel</h1>}
-            {activePanel === "info" && <h1>Info Panel</h1>}
+            {activePanel === "info" && (
+              <>
+                <div>
+                  <h1>
+
+                  Life gets busy. Sometimes you need help.
+                  Sometimes you have the skills to help someone else.
+
+                  <br />
+                  This platform connects people who need a service with people who can offer that service — safely and simply.
+
+                  <br />
+                  Whether it’s tutoring, moving help, design work, tech support, or everyday tasks, you can:
+                  </h1>
+                </div>
+              </>
+            )}
           </div>
         )}
   
