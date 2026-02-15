@@ -1,15 +1,15 @@
 import { supabase } from './supabase.js';
 
-// SIGN UP + CREATE PROFILE ROW
+// Sign up & Create Profile: 
 export async function signUp(email, password, name, phone) {
-  // 1. Create auth user
+  // Create auth user
   const { data, error } = await supabase.auth.signUp({ email, password });
   if (error) throw error;
 
   const user = data.user;
-  if (!user) return data; // email confirmation required
+  if (!user) return data; 
 
-  // 2. Create profile row in public.users
+  // Create profile row in public.users
   const { error: profileError } = await supabase.from('Users').insert({
     id: user.id,
     email: email || '',
@@ -24,7 +24,7 @@ export async function signUp(email, password, name, phone) {
   return data;
 }
 
-// LOGIN
+// Login: 
 export async function signIn(email, password) {
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
@@ -35,18 +35,18 @@ export async function signIn(email, password) {
   return data;
 }
 
-// LOGOUT
+// Logout: 
 export async function signOut() {
   await supabase.auth.signOut();
 }
 
-// GET CURRENT USER
+// Get Current User: 
 export async function getCurrentUser() {
   const { data } = await supabase.auth.getUser();
   return data.user;
 }
 
-// get DB profile instead of justaed of auth use 
+// Get DB profile
 export async function getUserProfile(id) {
   const { data, error } = await supabase
     .from('Users')
