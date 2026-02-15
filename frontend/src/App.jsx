@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
-import { supabase } from "./lib/supabase"; 
-import MendMap from "./components/Map";
-
+import { useState } from 'react'
+import viteLogo from '/vite.svg'
 
 function App() {
   const [pins, setPins] = useState([]);
@@ -23,11 +21,16 @@ function App() {
   }
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden">
-      <header className="bg-mend-dark p-4 flex justify-between items-center shadow-md z-[1000]">
-        <h1 className="text-mend-white text-xl font-bold">The MSP Mend</h1>
-        <button className="bg-mend-cyan text-mend-dark px-4 py-2 rounded-full font-bold text-sm">
-          + Drop a Pin
+    <>
+      <div>
+        <a href="https://vite.dev" target="_blank">
+          <img src={viteLogo} className="logo" alt="Vite logo" />
+        </a>
+      </div>
+      <h1>Vite + React</h1>
+      <div className="card">
+        <button onClick={() => setCount((count) => count + 1)}>
+          count is {count}
         </button>
       </header>
 
