@@ -8,6 +8,7 @@ export default function MapKey() {
     { label: "Art & Decor", color: "bg-purple-500" },
     { label: "Textiles/Clothing", color: "bg-orange-500" },
     { label: "Electronics", color: "bg-yellow-500" },
+    { label: "Other", color: "bg-gray-400" },
   ];
 
   return (
