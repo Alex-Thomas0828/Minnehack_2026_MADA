@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import { signUp } from '../lib/auth';
+import { useNavigate } from 'react-router-dom';
 
 export default function SignupForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
     try {
       await signUp(email, password);
       setMessage('Signup successful — check your email to confirm.');
+      navigate('/');
     } catch (err) {
       setMessage(err.message);
     }
