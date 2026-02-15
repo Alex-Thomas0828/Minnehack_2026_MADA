@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import { signIn } from '../lib/auth';
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
     try {
       await signIn(email, password);
       setMessage('Logged in successfully!');
+      navigate('/');   // ⭐ redirect to map
     } catch (err) {
       setMessage(err.message);
     }
