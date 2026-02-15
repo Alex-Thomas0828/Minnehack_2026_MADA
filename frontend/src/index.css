@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  --color-mend-white: #FFFFFF;
-  --color-mend-blue: #2180A8;
-  --color-mend-cyan: #42C9E9;
-  --color-mend-dark: #002A5D;
-  --color-mend-gold: #FFD700;
+  --color-mend-white: #ffffff;
+  --color-mend-blue: #2180a8;
+  --color-mend-light-blue: #67afc7;
+  --color-mend-cyan: #42c9e9;
+  --color-mend-dark: #002a5d;
+  --color-mend-gold: #ffd700;
 }
