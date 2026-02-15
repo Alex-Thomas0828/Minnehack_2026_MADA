@@ -35,7 +35,7 @@ app.get("/health", async (req, res) => {
   
 app.use("/api/users", userRoutes);
 app.use("/api/help", helpRoutes);
-app.use("/api/service", helpRoutes);
+app.use("/api/service", serviceRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

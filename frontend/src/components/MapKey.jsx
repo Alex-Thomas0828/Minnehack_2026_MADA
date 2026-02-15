@@ -12,8 +12,8 @@ export default function MapKey() {
   ];
 
   return (
-    <div className="absolute bottom-10 right-6 z-[1000] transition-all duration-300">
-      <div className="bg-white rounded-xl shadow-2xl border-2 border-mend-dark overflow-hidden transition-all w-56">
+    <div className="absolute bottom-10 right-6 z-[1000] pointer-events-none transition-all duration-300">
+      <div className="bg-white rounded-xl shadow-2xl border-2 border-mend-dark overflow-hidden transition-all w-56 pointer-events-auto">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="w-full bg-mend-dark p-3 flex items-center justify-between text-white hover:bg-mend-blue transition-colors"

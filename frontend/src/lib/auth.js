@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { supabase } from './supabase.js';
 
 // SIGN UP + CREATE PROFILE ROW
 export async function signUp(email, password) {
@@ -10,7 +10,7 @@ export async function signUp(email, password) {
   if (!user) return data; // email confirmation required
 
   // 2. Create profile row in public.users
-  const { error: profileError } = await supabase.from('users').insert({
+  const { error: profileError } = await supabase.from('Users').insert({
     id: user.id,
     name: '',
     phone: '',

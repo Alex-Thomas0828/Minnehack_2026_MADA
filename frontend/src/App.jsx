@@ -4,7 +4,6 @@ import { supabase } from "./lib/supabase";
 
 import MendMap from "./components/Map";
 import AuthPage from "./pages/AuthPage";
-import MapKey from "./components/MapKey";
 import MendDetails from "./components/MendDetails";
 
 function App() {
@@ -51,7 +50,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-
+        
         {/* Auth Page */}
         <Route path="/auth" element={<AuthPage />} />
 
@@ -68,9 +67,8 @@ function App() {
                   </button>
                 </header>
 
-                <main className="flex-1 relative">
+                <main className="flex-1 min-h-0 relative">
                   <MendMap pins={pins} onLocationSelect={handlePointSelection} onPinClick={setSelectedPin} />
-                  <MapKey />
                   {selectedPin && (
                     <MendDetails pin={selectedPin} onClose={() => setSelectedPin(null)} />
                   )}
