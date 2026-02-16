@@ -1,6 +1,15 @@
 import { useState } from 'react';
 import { signUp, signIn } from '../lib/auth';
 import { useNavigate } from 'react-router-dom';
+import Button from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import {
+  Card,
+  CardContent, CardHeader, CardTitle
+} from "@/components/ui/card"
+
+
+
 
 export default function SignupForm() {
   const [isSignup, setIsSignup] = useState(true);
@@ -28,62 +37,79 @@ export default function SignupForm() {
   }
 
   return (
-    <div className="min-h-screen bg-mend-light-blue flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <h1 className="text-5xl font-bold text-center mb-8 text-mend-white">Welcome to Mend!</h1>
+    <div className="min-h-screen bg-mend-light-blue flex items-center justify-center p-4" >
+      <div className="w-full max-w-lg">
+        <h1 className="text-5xl font-bold text-center mb-8 text-mend-white ">Welcome to MN Mend!</h1>
         <h2 className="text-4xl font-bold text-center mb-8 text-mend-white">
-          {isSignup ? 'Sign Up' : 'Sign In'}
         </h2>
 
-        <form onSubmit={handleSubmit} className="bg-mend-white rounded-2xl p-8 shadow-sm space-y-4 border-1/2 border-mend-white">
-          {isSignup && (
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Name"
-              className="w-full px-6 py-3 rounded-sm bg-[#f4f4f4]  text-[#0b2b36] placeholder:text-gray-500 outline-none"
-              required
-            />
-          )}
 
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            className="w-full px-6 py-3 rounded-sm bg-[#f4f4f4] text-[#0b2b36] placeholder:text-gray-500 outline-none"
-            required
-          />
+        <Card onSubmit={handleSubmit} className="p-6 pt-8 pb-0 bg-mend-white shadow-lg" >
+          <form onSubmit={handleSubmit}>
+            <CardHeader>
+              <CardTitle className="text-2xl text-center mb-4">
+                {isSignup ? 'Let\'s Get Started!' : 'Welcome Back!'}
 
-          {isSignup && (
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="Phone"
-              className="w-full px-6 py-3 rounded-sm bg-[#f4f4f4] text-[#0b2b36] placeholder:text-gray-500 outline-none"
-            />
-          )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-wrap gap-4">
+              {isSignup && (
+                <Input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Name"
 
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            className="w-full px-6 py-3 rounded-sm bg-[#f4f4f4] text-[#0b2b36] placeholder:text-gray-500 outline-none"
-            required
-          />
+                  required
+                />
+              )}
 
-          <div className="h-8" />
 
-          <button
-            type="submit"
-            className="w-full py-3 bg-mend-light-blue rounded-full text-mend-white font-medium hover:bg-mend-white transition hover:border-2 hover:border-mend-light-blue hover:text-mend-light-blue cursor-pointer shadow-sm"
-          >
-            {isSignup ? 'Sign Up' : 'Sign In'}
-          </button>
-        </form>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+
+                required
+              />
+
+              {isSignup && (
+                <Input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Phone"
+
+                />
+              )}
+
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+
+                required
+              />
+
+              <Button
+                type="submit"
+                variant="primary"
+                className="w-full mt-4 mb-0"
+              >
+
+                {isSignup ? 'Sign Up' : 'Sign In'}
+              </Button>
+              <div className="h-8" />
+
+            </CardContent>
+          </form>
+        </Card>
+
+
+
+
 
         <button
           onClick={() => setIsSignup(!isSignup)}
