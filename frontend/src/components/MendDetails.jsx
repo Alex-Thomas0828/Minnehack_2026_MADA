@@ -1,4 +1,7 @@
 import React from "react";
+import { Card } from "@/components/ui/card";
+import Button from "@/components/ui/button";
+import { X } from "lucide-react";
 
 const categoryColors = {
   "Physical Hardware": "bg-slate-500",
@@ -17,8 +20,11 @@ export default function MendDetails({ pin, onClose }) {
   const socialEntries = Object.entries(socials).filter(([, val]) => val);
 
   return (
-    <div className="absolute top-4 right-4 z-[1001] w-80 md:w-96 bg-white rounded-2xl shadow-2xl border-2 border-mend-dark overflow-hidden transition-all max-h-[calc(100%-2rem)] flex flex-col">
-      <div className="h-40 bg-slate-200 relative shrink-0">
+    <Card
+      variant="raised"
+      className="absolute top-4 right-4 z-1001 w-80 md:w-96 bg-background overflow-hidden transition-all max-h-[calc(100%-2rem)] flex flex-col"
+    >
+      <div className="h-40 bg-muted relative shrink-0 shadow-inset">
         {pin.image_url ? (
           <img
             src={pin.image_url}
@@ -26,30 +32,32 @@ export default function MendDetails({ pin, onClose }) {
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-mend-blue/10 text-mend-blue">
-            <span className="text-sm text-slate-400 font-medium">No image</span>
+          <div className="w-full h-full flex items-center justify-center bg-primary/10">
+            <span className="text-sm text-muted-foreground font-medium">No image</span>
           </div>
         )}
-        <button
+        <Button
+          size="icon"
+          shape="circle"
+          variant="default"
           onClick={onClose}
-          className="absolute top-2 right-2 bg-black/50 text-white w-8 h-8 rounded-full hover:bg-mend-dark transition"
+          className="absolute top-2 right-2 bg-black/70 text-white border-transparent hover:bg-black/90 shadow-raised"
         >
-          X
-        </button>
+          <X size={16} />
+        </Button>
       </div>
 
       <div className="p-6 overflow-y-auto flex-1">
         {/* Title & Badge */}
         <div className="flex justify-between items-start mb-2">
-          <h2 className="text-xl font-bold text-mend-dark leading-tight">
+          <h2 className="text-xl font-bold text-primary leading-tight">
             {pin.name}
           </h2>
           <span
-            className={`text-[10px] font-bold px-2 py-1 rounded uppercase tracking-tighter shrink-0 ${
-              isSupplier
-                ? "bg-emerald-100 text-emerald-700"
-                : "bg-red-100 text-red-700"
-            }`}
+            className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-tighter shrink-0 shadow-sm ${isSupplier
+              ? "bg-emerald-100 text-emerald-700"
+              : "bg-red-100 text-red-700"
+              }`}
           >
             {isSupplier ? "Mender" : "Request"}
           </span>
@@ -57,10 +65,10 @@ export default function MendDetails({ pin, onClose }) {
 
         {/* User Info */}
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-6 h-6 rounded-full bg-slate-300 shrink-0" />
-          <p className="text-xs font-medium text-slate-500">
+          <div className="w-6 h-6 rounded-full bg-muted shadow-inset shrink-0 border border-border" />
+          <p className="text-xs font-medium text-muted-foreground">
             Posted by{" "}
-            <span className="text-mend-blue">
+            <span className="text-primary font-semibold">
               {pin.user_name || "Community Member"}
             </span>
           </p>
@@ -80,43 +88,43 @@ export default function MendDetails({ pin, onClose }) {
 
         {/* Date Posted */}
         <div className="mb-4">
-          <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-tighter mb-1">
+          <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-wider mb-1">
             Date Posted
           </h4>
-          <p className="text-xs text-slate-600">
+          <p className="text-xs text-muted-foreground font-medium">
             {pin.created_at
               ? new Date(pin.created_at).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
               : "Unknown"}
           </p>
         </div>
 
         {/* Description */}
         <div className="mb-4">
-          <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-tighter mb-1">
+          <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-wider mb-1">
             Description
           </h4>
-          <p className="text-sm text-slate-600 leading-relaxed italic">
+          <p className="text-sm text-muted-foreground leading-relaxed italic">
             &ldquo;{pin.description}&rdquo;
           </p>
         </div>
         {/*Contact Information */}
         <div className="mb-4">
-          <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-tighter mb-2">
+          <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-wider mb-2">
             Contact Info
           </h4>
           <div className="space-y-2">
             {pin.email && (
               <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-slate-500">
+                <span className="text-xs font-medium text-muted-foreground">
                   Email:
                 </span>
                 <a
                   href={`mailto:${pin.email}`}
-                  className="text-xs text-mend-blue hover:underline"
+                  className="text-xs text-primary hover:underline font-medium"
                 >
                   {pin.email}
                 </a>
@@ -124,19 +132,19 @@ export default function MendDetails({ pin, onClose }) {
             )}
             {pin.phone && (
               <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-slate-500">
+                <span className="text-xs font-medium text-muted-foreground">
                   Phone:
                 </span>
                 <a
                   href={`tel:${pin.phone}`}
-                  className="text-xs text-mend-blue hover:underline"
+                  className="text-xs text-primary hover:underline font-medium"
                 >
                   {pin.phone}
                 </a>
               </div>
             )}
             {!pin.email && !pin.phone && (
-              <p className="text-xs text-slate-400 italic">
+              <p className="text-xs text-muted-foreground italic">
                 No contact info provided
               </p>
             )}
@@ -146,7 +154,7 @@ export default function MendDetails({ pin, onClose }) {
         {/*Business Website for suppliers only */}
         {isSupplier && (
           <div className="mb-4">
-            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-tighter mb-2">
+            <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-wider mb-2">
               Business
             </h4>
             {pin.website ? (
@@ -154,48 +162,45 @@ export default function MendDetails({ pin, onClose }) {
                 href={pin.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-mend-blue hover:underline break-all"
+                className="text-xs text-primary underline hover:no-underline break-all font-medium"
               >
                 {pin.website}
               </a>
             ) : (
-              <p className="text-xs text-slate-400 italic">No website listed</p>
+              <p className="text-xs text-muted-foreground italic">No website listed</p>
             )}
           </div>
         )}
 
         {/* Socials */}
         <div className="mb-6">
-          <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-tighter mb-2">
+          <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-wider mb-2">
             Socials
           </h4>
           {socialEntries.length > 0 ? (
             <div className="space-y-2">
               {socialEntries.map(([platform, handle]) => (
                 <div key={platform} className="flex items-center gap-2">
-                  <span className="text-xs font-medium text-slate-500 capitalize">
+                  <span className="text-xs font-medium text-muted-foreground capitalize">
                     {platform}:
                   </span>
-                  <span className="text-xs text-mend-blue">{handle}</span>
+                  <span className="text-xs text-primary font-medium">{handle}</span>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-xs text-slate-400 italic">No socials listed</p>
+            <p className="text-xs text-muted-foreground italic">No socials listed</p>
           )}
         </div>
 
         {/*Contact/Action Button */}
-        <button
-          className={`w-full py-3 rounded-xl font-bold text-sm transition-all shadow-lg ${
-            isSupplier
-              ? "bg-mend-dark text-white hover:bg-mend-blue"
-              : "bg-mend-cyan text-mend-dark hover:bg-mend-blue hover:text-white"
-          }`}
+        <Button
+          variant="primary"
+          className="w-full text-white bg-primary"
         >
           {isSupplier ? "Contact for Repair" : "Offer to Mend This"}
-        </button>
+        </Button>
       </div>
-    </div>
+    </Card>
   );
 }

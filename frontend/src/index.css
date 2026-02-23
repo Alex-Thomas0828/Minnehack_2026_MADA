@@ -1,28 +1,26 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
 @import "tailwindcss";
-@import url("https://fonts.googleapis.com/css2?family=Neutron:wght@400;500;600;700&display=swap");
 /* ...existing code... */
 
-body {
+* {
   /* ...existing code... */
-  font-family: "helvetica", sans-serif;
+  font-family: "Outfit";
 }
 @theme {
-  /* --color-mend-white: #ffffff;
   --color-mend-blue: #2180a8;
-  --color-mend-light-blue: #67afc7;
   --color-mend-cyan: #2180a8;
   --color-mend-dark: #67afc7;
   --color-mend-gold: #ffd700;
-   */
 
-  --color-background: #67afc7;
+  --color-text-primary: #2180a8;
+  --color-background: #f8f8ff;
   --color-foreground: #ffffff;
   --color-primary: #67afc7;
   --color-destructive: var(--color-red-600);
   --color-warning: var(--color-orange-600);
   --color-shadow: rgba(0, 0, 0, 0.2);
   --color-border: var(--color-zinc-200);
-  --color-highlight: rgba(255, 255, 255, 1);
+  --color-highlight: rgba(255, 255, 255, 0.6);
   --shadow-raised:
     2px 2px 6px var(--color-shadow), -2px -2px 6px var(--color-highlight),
     inset 0px 0px 0px var(--color-shadow),
@@ -34,7 +32,7 @@ body {
     inset 2px 2px 6px var(--color-shadow),
     inset -2px -2px 6px var(--color-highlight);
   --color-muted: var(--color-zinc-300);
-  --color-muted-foreground: var(--color-zinc-600);
+  --color-muted-foreground: var(--color-gray-400);
 }
 
 @layer theme {

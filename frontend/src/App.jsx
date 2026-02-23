@@ -10,6 +10,7 @@ import MendDetails from "./components/MendDetails";
 import ChooseRolePage from "./pages/ChooseRolePage";
 import NeedHelpPage from "./pages/NeedHelpPage";
 import MenderPage from "./pages/MenderPage";
+import Button from "./components/ui/button";
 
 function AppInner() {
   const [pins, setPins] = useState([]);
@@ -120,19 +121,19 @@ function AppInner() {
         element={
           user ? (
             <div className="flex flex-col h-screen w-screen overflow-hidden">
-              <header className="bg-mend-dark p-4 flex justify-between items-center shadow-md z-[1000]">
-                <h1 className="text-mend-white text-xl font-bold">The MSP Mend</h1>
-                <button
+              <header className="bg-mend-dark p-4 flex justify-between items-center shadow-md z-1000">
+                <h1 className="text-white text-xl font-bold">The MSP Mend</h1>
+                <Button
                   onClick={() => {
                     setIsDropping(prev => !prev);
                     setDroppedPin(null);
                   }}
-                  className={`px-4 py-2 rounded-full font-bold text-sm transition-colors ${
-                    isDropping ? "bg-red-500 text-white" : "bg-mend-cyan text-mend-dark"
-                  }`}
+                  variant={isDropping ? "destructive" : "primary"}
+                  shape="circle"
+                  className="px-4 text-sm text-white"
                 >
                   {isDropping ? "Cancel" : "+ Drop a Pin"}
-                </button>
+                </Button>
               </header>
 
               {isDropping && (

@@ -2,6 +2,7 @@ import { Menu, User, Info } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getCurrentUser, getUserProfile } from "../lib/auth";
 import PinModal from "./PinModal";
+import Button from "./ui/button";
 
 export default function Sidebar({ pins = [], onPinClick }) {
   const [activePanel, setActivePanel] = useState(null);
@@ -24,37 +25,51 @@ export default function Sidebar({ pins = [], onPinClick }) {
     setActivePanel((prev) => (prev === panel ? null : panel));
   }
 
+  function navButtonClass(panel) {
+    const baseClass = "text-white border-transparent shadow-none transition-all duration-250 ease-out";
+    if (activePanel === panel) {
+      return `${baseClass} bg-mend-cyan shadow-inset scale-95`;
+    }
+    return `${baseClass} bg-transparent hover:bg-mend-cyan/45 hover:-translate-y-0.5 hover:shadow-raised active:translate-y-0 active:scale-95 active:shadow-inset`;
+  }
+
   return (
     <div className="flex h-screen relative">
       {/* SIDEBAR NAVIGATION */}
       <div className="w-20 bg-mend-dark text-white flex flex-col items-center py-6 shrink-0 z-20">
         <div className="flex flex-col space-y-6 w-full items-center">
-          <button
-            className={`flex items-center justify-center w-12 h-12 rounded-full transition duration-250 ${
-              activePanel === "profile" ? "bg-mend-cyan" : "hover:bg-mend-cyan/50"
-            }`}
+          <Button
+            size="icon"
+            shape="circle"
+            variant="default"
+            className={navButtonClass("profile")}
             onClick={() => togglePanel("profile")}
+            aria-pressed={activePanel === "profile"}
           >
             <User />
-          </button>
+          </Button>
 
-          <button
-            className={`flex items-center justify-center w-12 h-12 rounded-full transition duration-250 ${
-              activePanel === "filter" ? "bg-mend-cyan" : "hover:bg-mend-cyan/50"
-            }`}
+          <Button
+            size="icon"
+            shape="circle"
+            variant="default"
+            className={navButtonClass("filter")}
             onClick={() => togglePanel("filter")}
+            aria-pressed={activePanel === "filter"}
           >
             <Menu />
-          </button>
+          </Button>
 
-          <button
-            className={`flex items-center justify-center w-12 h-12 rounded-full transition duration-250 ${
-              activePanel === "info" ? "bg-mend-cyan" : "hover:bg-mend-cyan/50"
-            }`}
+          <Button
+            size="icon"
+            shape="circle"
+            variant="default"
+            className={navButtonClass("info")}
             onClick={() => togglePanel("info")}
+            aria-pressed={activePanel === "info"}
           >
             <Info />
-          </button>
+          </Button>
         </div>
       </div>
 

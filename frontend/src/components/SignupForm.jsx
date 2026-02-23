@@ -37,14 +37,14 @@ export default function SignupForm() {
   }
 
   return (
-    <div className="min-h-screen bg-mend-light-blue flex items-center justify-center p-4" >
+    <div className="min-h-screen bg-background flex items-center justify-center p-4" >
       <div className="w-full max-w-lg">
-        <h1 className="text-5xl font-bold text-center mb-8 text-mend-white ">Welcome to MN Mend!</h1>
-        <h2 className="text-4xl font-bold text-center mb-8 text-mend-white">
+        <h1 className="text-5xl font-bold text-center mb-8 text-text-primary ">Welcome to MN Mend!</h1>
+        <h2 className="text-4xl font-bold text-center mb-8 text-black">
         </h2>
 
 
-        <Card onSubmit={handleSubmit} className="p-6 pt-8 pb-0 bg-mend-white shadow-lg" >
+        <Card onSubmit={handleSubmit} className="p-6 pt-8 pb-0 bg-background shadow-lg text-text-primary" >
           <form onSubmit={handleSubmit}>
             <CardHeader>
               <CardTitle className="text-2xl text-center mb-4">
@@ -52,9 +52,10 @@ export default function SignupForm() {
 
               </CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-wrap gap-4">
+            <CardContent className="flex flex-wrap gap-4 ">
               {isSignup && (
                 <Input
+                  className="text-black placeholder:text-muted"
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -66,6 +67,7 @@ export default function SignupForm() {
 
 
               <Input
+                className="text-black placeholder:text-muted"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -76,6 +78,7 @@ export default function SignupForm() {
 
               {isSignup && (
                 <Input
+                  className="text-black placeholder:text-muted"
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
@@ -85,6 +88,7 @@ export default function SignupForm() {
               )}
 
               <Input
+                className="text-black placeholder:text-muted"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -113,7 +117,7 @@ export default function SignupForm() {
 
         <button
           onClick={() => setIsSignup(!isSignup)}
-          className="w-full mt-6 py-3 text-mend-black font-medium hover:underline cursor-pointer"
+          className="w-full mt-6 py-3 text-black font-medium hover:underline cursor-pointer"
         >
           Or {isSignup ? 'Sign In' : 'Sign Up'}
         </button>

@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { uploadImage } from "../lib/upload";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import Button from "@/components/ui/button";
 
 export default function MenderPage() {
   const navigate = useNavigate();
@@ -13,6 +16,18 @@ export default function MenderPage() {
   const [website, setWebsite] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === "Escape") {
+        navigate("/");
+      }
+    };
+
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [navigate]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -43,53 +58,62 @@ export default function MenderPage() {
   }
 
   return (
-    <div className="min-h-screen p-6 flex flex-col items-center bg-mend-light">
-      <h1 className="text-xl font-bold mb-6">How can you help?</h1>
+    <div className="min-h-screen p-6 flex flex-col items-center bg-background">
+      <h1 className="text-3xl font-bold mb-6 text-primary">How can you help?</h1>
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md space-y-4"
-      >
-        <input
-          type="text"
-          placeholder="Your name or business name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full border p-2 rounded"
-          required
-        />
+      <Card className="w-full max-w-md bg-background text-text-primary p-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Input
+            type="text"
+            placeholder="Your name or business name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
 
-        <textarea
-          placeholder="Describe your skills or services"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full border p-2 rounded h-24"
-          required
-        />
+          <textarea
+            placeholder="Describe your skills or services"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full border border-highlight bg-background p-3 rounded-md h-24 text-sm shadow-inset placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-foreground"
+            required
+          />
 
-        <input
-          type="url"
-          placeholder="Website link (optional)"
-          value={website}
-          onChange={(e) => setWebsite(e.target.value)}
-          className="w-full border p-2 rounded"
-        />
+          <Input
+            type="url"
+            placeholder="Website link (optional)"
+            value={website}
+            onChange={(e) => setWebsite(e.target.value)}
+          />
 
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setImageFile(e.target.files[0])}
-          className="w-full"
-        />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={(e) => setImageFile(e.target.files[0])}
+            className="hidden"
+          />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-mend-blue text-white py-3 rounded-lg font-semibold disabled:opacity-50"
-        >
-          {loading ? "Submitting..." : "Submit"}
-        </button>
-      </form>
+          <Button
+            type="button"
+            variant="default"
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full text-muted-foreground"
+          >
+            {imageFile ? imageFile.name : "Choose Image"}
+          </Button>
+
+          <Button
+            type="submit"
+            disabled={loading}
+            variant="primary"
+            className="w-full text-white bg-primary"
+          >
+            {loading ? "Submitting..." : "Submit"}
+          </Button>
+        </form>
+      </Card>
+      <p className=" text-sm text-gray-500 p-6">press [esc] to cancel</p>
     </div>
   );
 }
