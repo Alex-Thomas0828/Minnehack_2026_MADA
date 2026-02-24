@@ -11,6 +11,7 @@ import ChooseRolePage from "./pages/ChooseRolePage";
 import NeedHelpPage from "./pages/NeedHelpPage";
 import MenderPage from "./pages/MenderPage";
 import Button from "./components/ui/button";
+import { Plus } from 'lucide-react';
 
 function AppInner() {
   const [pins, setPins] = useState([]);
@@ -120,20 +121,30 @@ function AppInner() {
         path="/"
         element={
           user ? (
-            <div className="flex flex-col h-screen w-screen overflow-hidden">
+            <div className="flex flex-col h-screen w-screen overflow-hidden ">
               <header className="bg-mend-dark p-4 flex justify-between items-center shadow-md z-1000">
-                <h1 className="text-white text-xl font-bold">The MSP Mend</h1>
-                <Button
-                  onClick={() => {
-                    setIsDropping(prev => !prev);
-                    setDroppedPin(null);
-                  }}
-                  variant={isDropping ? "destructive" : "primary"}
-                  shape="circle"
-                  className="px-4 text-sm text-white"
-                >
-                  {isDropping ? "Cancel" : "+ Drop a Pin"}
-                </Button>
+                <div className='flex gap-2'>
+                  <h1 className="text-white text-xl font-bold">The MSP Mend.</h1>
+
+                  <p className="text-white text-xs pt-2">connecting neighbors.</p>
+
+
+                </div>
+                <div>
+                  <Button
+                    onClick={() => {
+                      setIsDropping(prev => !prev);
+                      setDroppedPin(null);
+                    }}
+                    variant={isDropping ? "destructive" : "primary"}
+                    shape="circle"
+                    className="px-4 gap-1 text-sm text-white"
+                  >
+                    <Plus />
+                    {isDropping ? "Cancel" : "Drop a Pin"}
+                  </Button>
+                </div>
+
               </header>
 
               {isDropping && (

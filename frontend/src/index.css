@@ -4,7 +4,7 @@
 
 * {
   /* ...existing code... */
-  font-family: "Outfit";
+  font-family: "Outfit", sans-serif;
 }
 @theme {
   --color-mend-blue: #2180a8;
@@ -13,6 +13,7 @@
   --color-mend-gold: #ffd700;
 
   --color-text-primary: #2180a8;
+  --color-text-muted: rgba(13%, 50%, 66%, 0.85);
   --color-background: #f8f8ff;
   --color-foreground: #ffffff;
   --color-primary: #67afc7;

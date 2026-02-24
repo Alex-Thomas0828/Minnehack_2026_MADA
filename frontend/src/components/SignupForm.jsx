@@ -39,7 +39,9 @@ export default function SignupForm() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4" >
       <div className="w-full max-w-lg">
-        <h1 className="text-5xl font-bold text-center mb-8 text-text-primary ">Welcome to MN Mend!</h1>
+        <h2 className='text-text-primary text-1xl'>Welcome to...</h2>
+        <h1 className="text-text-primary text-6xl font-bold text-center">The MSP Mend.</h1>
+        <p className="text-text-primary text-sm pt-2 ml-2 text-center">we connect neighbors to services.</p>
         <h2 className="text-4xl font-bold text-center mb-8 text-black">
         </h2>
 
@@ -47,7 +49,7 @@ export default function SignupForm() {
         <Card onSubmit={handleSubmit} className="p-6 pt-8 pb-0 bg-background shadow-lg text-text-primary" >
           <form onSubmit={handleSubmit}>
             <CardHeader>
-              <CardTitle className="text-2xl text-center mb-4">
+              <CardTitle className="text-2xl text-center mb-4 text-text-muted">
                 {isSignup ? 'Let\'s Get Started!' : 'Welcome Back!'}
 
               </CardTitle>
@@ -100,7 +102,7 @@ export default function SignupForm() {
               <Button
                 type="submit"
                 variant="primary"
-                className="w-full mt-4 mb-0"
+                className="w-full mt-4 mb-0 bg-primary text-white"
               >
 
                 {isSignup ? 'Sign Up' : 'Sign In'}
@@ -117,7 +119,7 @@ export default function SignupForm() {
 
         <button
           onClick={() => setIsSignup(!isSignup)}
-          className="w-full mt-6 py-3 text-black font-medium hover:underline cursor-pointer"
+          className="w-full mt-6 py-3 text-muted-foreground font-medium hover:underline cursor-pointer"
         >
           Or {isSignup ? 'Sign In' : 'Sign Up'}
         </button>

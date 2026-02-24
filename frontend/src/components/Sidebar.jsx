@@ -75,7 +75,7 @@ export default function Sidebar({ pins = [], onPinClick }) {
 
       {/* EXPANDABLE CONTENT PANEL */}
       {activePanel && (
-        <div className="w-72 bg-white text-black shadow-lg flex flex-col h-full shrink-0 z-10 border-r border-slate-200">
+        <div className="w-84 bg-white text-black shadow-lg flex flex-col h-full shrink-0 z-10 border-r border-slate-200 ">
           {/* Profile Panel */}
           {activePanel === "profile" && (
             <div className="p-6">

@@ -21,10 +21,10 @@ export default function PinModal({ pin, onClick }) {
     : "";
 
   return (
-    <Card
+    <Card 
       variant="raised"
       onClick={() => onClick(pin)}
-      className="w-full text-left m-3 p-4 cursor-pointer hover:shadow-inset hover:scale-98 active:shadow-inset active:scale-97 transition-all duration-250 bg-background"
+      className="w-74 text-left m-4 p-4 cursor-pointer hover:shadow-inset hover:scale-98 active:shadow-inset active:scale-97 transition-all duration-250 bg-background"
     >
       {/* Top row: badge + date */}
       <div className="flex items-center justify-between mb-3">
